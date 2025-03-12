@@ -5,17 +5,31 @@
 #include <AdafruitIO_WiFi.h>
 #include <Adafruit_MQTT_Client.h>
 #include <string>
+#include <Wire.h>
+#include <SPI.h>
+// #include <Adafruit_Sensor.h>
+#include <Adafruit_BME680.h>
 
+// definitions for communications
 #define AIO_SERVER      "io.adafruit.com"
 #define AIO_SERVERPORT  1883                   // use 8883 for SSL
 #define AIO_USERNAME    "CzarHC"
 #define AIO_KEY         "aio_oCiM51HqaA1iuzSgx1DUMfX9MQsY"
 
+// wifi
 #define SSID "tommy"
 #define PASSWORD "hilfiger"
 
+//feed being used
 #define NUM "1"
 #define FEED "/feeds/lynktree.comms"
+
+// definitions for BME680 sensor
+#define BME_SCK 13
+#define BME_MISO 12
+#define BME_MOSI 11
+#define BME_CS 10
+#define SEALEVELPRESSURE_HPA (1013.25)
 
 class LynkTree
 {
@@ -34,8 +48,11 @@ private:
     // publishers
     Adafruit_MQTT_Publish data = Adafruit_MQTT_Publish(&mqtt, AIO_USERNAME FEED NUM);
     
-    
+    // BME680
+    Adafruit_BME680 bme_{&Wire};
+    void BmeSetup();
+
     // data
-    int32_t x_ = 2;
+    //int32_t x_ = 2;
 };
 
