@@ -2,12 +2,17 @@
 
 LynkTree::LynkTree() {
     Serial.begin(115200);
+    Serial.println("Connecting to Wi-Fi");
+    WifiSetup();
+    MqttSetup();
+}
+
+void LynkTree::WifiSetup() {
     if (cyw43_arch_init()) {
         return;
     }
 
-    WiFi.begin(ssid_, password_);
-    Serial.println("Connecting to Wi-Fi");
+    WiFi.begin(SSID, PASSWORD);
 
     // attempt to connect to the wifi network
     int attempt = 0;
@@ -25,9 +30,49 @@ LynkTree::LynkTree() {
     }
 }
 
+void LynkTree::MqttSetup() 
+{
+    int8_t ret;
+
+    if (mqtt.connected()) { // if already connected, return
+        return;
+    }
+
+
+    uint8_t retries = 5;
+    while ((ret = mqtt.connect()) != 0) {
+        Serial.println(mqtt.connectErrorString(ret));
+        Serial.println("Retrying MQTT connection in 5 seconds...");
+        mqtt.disconnect();
+        delay(5000);  // wait 1 seconds
+        retries--;
+        if (retries == 0) {
+            // die and let watchdog reset
+            while (1);
+        }
+        for (int i = 0; i < ret+2; i++)
+        {
+            cyw43_arch_gpio_put(CYW43_WL_GPIO_LED_PIN, 1);
+            sleep_ms(250);
+            cyw43_arch_gpio_put(CYW43_WL_GPIO_LED_PIN, 0);
+            sleep_ms(250);
+        }
+
+    }
+
+    Serial.println("MQTT Connected!");
+}
+
 void LynkTree::loop()
 {
-    Serial.println("Hello");
-    delay(1000);
+    data.publish(x_++);
+
+    // add debug led
+    cyw43_arch_gpio_put(CYW43_WL_GPIO_LED_PIN, 1);
+    sleep_ms(250);
+    cyw43_arch_gpio_put(CYW43_WL_GPIO_LED_PIN, 0);
+    sleep_ms(250);
+
+    sleep_ms(2000);
 }
 
