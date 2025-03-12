@@ -6,7 +6,7 @@
 #include <Adafruit_MQTT_Client.h>
 #include <string>
 #include <Wire.h>
-#include <SPI.h>
+// #include <SPI.h>
 // #include <Adafruit_Sensor.h>
 #include <Adafruit_BME680.h>
 
@@ -20,15 +20,14 @@
 #define SSID "tommy"
 #define PASSWORD "hilfiger"
 
+// #define SSID "Octopus"
+// #define PASSWORD "praxis123"
+
 //feed being used
 #define NUM "1"
 #define FEED "/feeds/lynktree.comms"
 
 // definitions for BME680 sensor
-#define BME_SCK 13
-#define BME_MISO 12
-#define BME_MOSI 11
-#define BME_CS 10
 #define SEALEVELPRESSURE_HPA (1013.25)
 
 class LynkTree
