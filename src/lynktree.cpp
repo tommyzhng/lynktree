@@ -49,15 +49,25 @@ void LynkTree::MqttSetup()
         retries--;
         if (retries == 0) {
             // die and let watchdog reset
-            while (1);
-        }
-        for (int i = 0; i < ret+2; i++)
-        {
             cyw43_arch_gpio_put(CYW43_WL_GPIO_LED_PIN, 1);
             sleep_ms(250);
             cyw43_arch_gpio_put(CYW43_WL_GPIO_LED_PIN, 0);
             sleep_ms(250);
+            cyw43_arch_gpio_put(CYW43_WL_GPIO_LED_PIN, 1);
+            sleep_ms(250);
+            cyw43_arch_gpio_put(CYW43_WL_GPIO_LED_PIN, 0);
+            sleep_ms(250);
+            cyw43_arch_gpio_put(CYW43_WL_GPIO_LED_PIN, 0);
+            sleep_ms(250);
+            while (1);
         }
+        // for (int i = 0; i < ret+2; i++)
+        // {
+        //     cyw43_arch_gpio_put(CYW43_WL_GPIO_LED_PIN, 1);
+        //     sleep_ms(250);
+        //     cyw43_arch_gpio_put(CYW43_WL_GPIO_LED_PIN, 0);
+        //     sleep_ms(250);
+        // }
 
     }
 
@@ -67,6 +77,8 @@ void LynkTree::MqttSetup()
 void LynkTree::BmeSetup()
 {
     Serial.println(F("BME680 test"));
+
+    Wire.begin();
   
     if (!bme_.begin()) {
         Serial.println("Could not find a valid BME680 sensor, check wiring!");
