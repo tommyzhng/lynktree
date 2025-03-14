@@ -12,6 +12,7 @@
 #include <bme68x.h>
 #include <drivers/bme68x/bme68x.hpp>
 #include <bme68x_defs.h>
+#include <ArduinoJson.h>
 
 
 // definitions for communications
@@ -21,11 +22,11 @@
 #define AIO_KEY         "aio_oCiM51HqaA1iuzSgx1DUMfX9MQsY"
 
 // wifi
-#define SSID "tommy"
-#define PASSWORD "hilfiger"
+// #define SSID "tommy"
+// #define PASSWORD "hilfiger"
 
-// #define SSID "Octopus"
-// #define PASSWORD "praxis123"
+#define SSID "Octopus"
+#define PASSWORD "praxis123"
 
 //feed being used
 #define NUM "1"
