@@ -6,36 +6,64 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>546</width>
-    <height>414</height>
+    <width>800</width>
+    <height>600</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Lynktree</string>
   </property>
-  <widget class="QWebView" name="webView">
+  <widget class="QLCDNumber" name="lcdFFMC">
    <property name="geometry">
     <rect>
-     <x>90</x>
-     <y>70</y>
-     <width>300</width>
-     <height>200</height>
+     <x>670</x>
+     <y>10</y>
+     <width>111</width>
+     <height>41</height>
     </rect>
    </property>
-   <property name="url">
-    <url>
-     <string>about:blank</string>
-    </url>
+  </widget>
+  <widget class="QLCDNumber" name="lcdDMC">
+   <property name="geometry">
+    <rect>
+     <x>670</x>
+     <y>70</y>
+     <width>111</width>
+     <height>41</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QLCDNumber" name="lcdDC">
+   <property name="geometry">
+    <rect>
+     <x>670</x>
+     <y>130</y>
+     <width>111</width>
+     <height>41</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QLCDNumber" name="lcdISI">
+   <property name="geometry">
+    <rect>
+     <x>670</x>
+     <y>190</y>
+     <width>111</width>
+     <height>41</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QLCDNumber" name="lcdBUI">
+   <property name="geometry">
+    <rect>
+     <x>670</x>
+     <y>260</y>
+     <width>111</width>
+     <height>41</height>
+    </rect>
    </property>
   </widget>
  </widget>
- <customwidgets>
-  <customwidget>
-   <class>QWebView</class>
-   <extends>QWidget</extends>
-   <header location="global">QtWebKitWidgets/QWebView</header>
-  </customwidget>
- </customwidgets>
  <resources/>
  <connections/>
 </ui>
