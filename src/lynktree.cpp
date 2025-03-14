@@ -51,16 +51,16 @@ void LynkTree::MqttSetup()
         // }
 
     }
-    debugMsg_.publish("MQTT Connected!");
+    Debug("MQTT Connected!");
 }
 
 void LynkTree::BmeSetup()
 {
     if (!bme_.init()) {
-        debugMsg_.publish("BME680 sensor not found!");
+        Debug("BME680 sensor not found!");
         return;
     }
-    debugMsg_.publish("BME680 sensor found!");
+    Debug("BME680 sensor found!");
 
 }
 
