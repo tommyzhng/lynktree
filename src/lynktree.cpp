@@ -69,9 +69,17 @@ void LynkTree::loop()
 {
     // data.publish(x_++);
     bme68x_data bme_data;
-
     auto result = bme_.read_forced(&bme_data);
-    data_.publish(bme_data.temperature);
+
+    // set up the JSON file
+    StaticJsonDocument<200> jsonDoc;
+    jsonDoc["temperature"] = bme_data.temperature;
+    jsonDoc["humidity"] = bme_data.humidity;
+
+    // serialize the JSON file
+    char jsonBuffer[200];
+    serializeJson(jsonDoc, jsonBuffer);
+    data_.publish(jsonBuffer);
 
     // add debug led
     // cyw43_arch_gpio_put(CYW43_WL_GPIO_LED_PIN, 1);
