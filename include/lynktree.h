@@ -11,10 +11,13 @@
 #define AIO_USERNAME    "CzarHC"
 #define AIO_KEY         "aio_oCiM51HqaA1iuzSgx1DUMfX9MQsY"
 
-#define SSID "tommy"
-#define PASSWORD "hilfiger"
+// #define SSID "tommy"
+// #define PASSWORD "hilfiger"
 
-#define NUM "1"
+#define SSID "Octopus"
+#define PASSWORD "praxis123"
+
+#define NUM "1" //this is the module number that should be edited
 #define FEED "/feeds/lynktree.comms"
 
 class LynkTree
