@@ -7,8 +7,12 @@
 #include <string>
 #include <Wire.h>
 // #include <SPI.h>
-#include <Adafruit_Sensor.h>
-#include <Adafruit_BME680.h>
+#include <stdio.h>
+#include <pico/stdio.h>
+#include <bme68x.h>
+#include <drivers/bme68x/bme68x.hpp>
+#include <bme68x_defs.h>
+
 
 // definitions for communications
 #define AIO_SERVER      "io.adafruit.com"
@@ -49,7 +53,13 @@ private:
     Adafruit_MQTT_Publish data_ = Adafruit_MQTT_Publish(&mqtt, AIO_USERNAME FEED NUM);
     
     // BME680
-    Adafruit_BME680 bme_;
+    pimoroni::I2C i2c{pimoroni::BOARD::BREAKOUT_GARDEN};
+    pimoroni::BME68X bme_{&i2c};
+    #ifdef PICO_DEFAULT_LED_PIN
+        gpio_init(PICO_DEFAULT_LED_PIN);
+        gpio_set_dir(PICO_DEFAULT_LED_PIN, GPIO_OUT);
+    #endif
+
     void BmeSetup();
 
     // data

@@ -56,26 +56,22 @@ void LynkTree::MqttSetup()
 
 void LynkTree::BmeSetup()
 {
-    Wire.begin(0x77);
-    if (!bme_.begin()) {
-        debugMsg_.publish("Could not find a valid BME680 sensor, check wiring!");
-        while (1);
+    if (!bme_.init()) {
+        debugMsg_.publish("BME680 sensor not found!");
+        return;
     }
     debugMsg_.publish("BME680 sensor found!");
-  
-    // Set up oversampling and filter initialization
-    bme_.setTemperatureOversampling(BME680_OS_8X);
-    bme_.setHumidityOversampling(BME680_OS_2X);
-    bme_.setPressureOversampling(BME680_OS_4X);
-    bme_.setIIRFilterSize(BME680_FILTER_SIZE_3);
-    bme_.setGasHeater(320, 150); // 320*C for 150 ms
+
 }
 
 
 void LynkTree::loop()
 {
     // data.publish(x_++);
-    data_.publish(bme_.temperature);
+    bme68x_data bme_data;
+
+    auto result = bme_.read_forced(&bme_data);
+    data_.publish(bme_data.temperature);
 
     // add debug led
     // cyw43_arch_gpio_put(CYW43_WL_GPIO_LED_PIN, 1);
