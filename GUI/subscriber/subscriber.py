@@ -10,8 +10,8 @@ import paho.mqtt.client as mqtt
 class Subscriber:
     def __init__(self):
          # add more to these as you make more modules
-        self.locations = {"1":{"lat":43.67, "long": -79.39}, #Myhall
-                          "2":{"lat":26.61, "long": -81.08}} #Florida - Hendry County
+        self.locations = {"1":{"lat":43.67, "long": -79.39}, # Myhall
+                          "2":{"lat":48.38, "long": 89.25}} # Thunder bay
         self.curr_data = {}
         self.weather = Weather()
 
@@ -40,12 +40,13 @@ class Subscriber:
         self.curr_data[module_name] = self.weather.get_weather(self.locations[module_name]["lat"], self.locations[module_name]["long"])
         value = json.loads(msg.payload.decode())  # Decode message
         self.curr_data[module_name].update(value)  # Update data dictionary
+        self.curr_data[module_name]["time"] = time.strftime("%H:%M:%S")  # format in HH:MM:SS
         # print(f"Updated {module_name}: {value}")
         return
 
-
+# for testing
 if __name__ == "__main__":
     sub = Subscriber()
     while True:
-        time.sleep(1) # sleep for 1 second
+        time.sleep(5) # sleep for 1 second
         print(sub.curr_data) # print the current data
