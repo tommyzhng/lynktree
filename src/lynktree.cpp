@@ -87,7 +87,7 @@ void LynkTree::loop()
     // cyw43_arch_gpio_put(CYW43_WL_GPIO_LED_PIN, 0);
     // sleep_ms(250);
 
-    sleep_ms(2000);
+    sleep_ms(5000);
 }
 
 
