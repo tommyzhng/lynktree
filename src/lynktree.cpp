@@ -2,7 +2,6 @@
 
 LynkTree::LynkTree() {
     Serial.begin(115200);
-    Serial.println("Connecting to Wi-Fi");
     WifiSetup();
     MqttSetup();
     BmeSetup();
@@ -13,6 +12,7 @@ void LynkTree::WifiSetup() {
         return;
     }
 
+
     WiFi.begin(SSID, PASSWORD);
 
     // attempt to connect to the wifi network
@@ -20,14 +20,6 @@ void LynkTree::WifiSetup() {
     while (WiFi.status() != WL_CONNECTED && attempt < 20) {
         delay(500);
         Serial.print(".");
-    }
-
-    if (WiFi.status() == WL_CONNECTED) {
-        Serial.println("Connected to Wi-Fi");
-        Serial.print("IP Address: ");
-        Serial.println(WiFi.localIP());
-    } else {
-        Serial.println("\nConnection failed");
     }
 }
 
@@ -42,23 +34,12 @@ void LynkTree::MqttSetup()
 
     uint8_t retries = 5;
     while ((ret = mqtt.connect()) != 0) {
-        Serial.println(mqtt.connectErrorString(ret));
-        Serial.println("Retrying MQTT connection in 5 seconds...");
+        //debugMsg_.publish(String(mqtt.connectErrorString(ret)).c_str());
         mqtt.disconnect();
         delay(5000);  // wait 1 seconds
         retries--;
         if (retries == 0) {
             // die and let watchdog reset
-            cyw43_arch_gpio_put(CYW43_WL_GPIO_LED_PIN, 1);
-            sleep_ms(250);
-            cyw43_arch_gpio_put(CYW43_WL_GPIO_LED_PIN, 0);
-            sleep_ms(250);
-            cyw43_arch_gpio_put(CYW43_WL_GPIO_LED_PIN, 1);
-            sleep_ms(250);
-            cyw43_arch_gpio_put(CYW43_WL_GPIO_LED_PIN, 0);
-            sleep_ms(250);
-            cyw43_arch_gpio_put(CYW43_WL_GPIO_LED_PIN, 0);
-            sleep_ms(250);
             while (1);
         }
         // for (int i = 0; i < ret+2; i++)
@@ -70,28 +51,17 @@ void LynkTree::MqttSetup()
         // }
 
     }
-
-    Serial.println("MQTT Connected!");
+    debugMsg_.publish("MQTT Connected!");
 }
 
 void LynkTree::BmeSetup()
 {
-    Serial.println(F("BME680 test"));
-
-    Wire.begin();
-  
+    Wire.begin(0x77);
     if (!bme_.begin()) {
-        Serial.println("Could not find a valid BME680 sensor, check wiring!");
-        cyw43_arch_gpio_put(CYW43_WL_GPIO_LED_PIN, 1);
-        sleep_ms(250);
-        cyw43_arch_gpio_put(CYW43_WL_GPIO_LED_PIN, 0);
-        sleep_ms(250);
-        cyw43_arch_gpio_put(CYW43_WL_GPIO_LED_PIN, 1);
-        sleep_ms(250);
-        cyw43_arch_gpio_put(CYW43_WL_GPIO_LED_PIN, 0);
-        sleep_ms(250);
+        debugMsg_.publish("Could not find a valid BME680 sensor, check wiring!");
         while (1);
     }
+    debugMsg_.publish("BME680 sensor found!");
   
     // Set up oversampling and filter initialization
     bme_.setTemperatureOversampling(BME680_OS_8X);
@@ -105,15 +75,19 @@ void LynkTree::BmeSetup()
 void LynkTree::loop()
 {
     // data.publish(x_++);
-    data.publish(bme_.temperature);
-
+    data_.publish(bme_.temperature);
 
     // add debug led
-    cyw43_arch_gpio_put(CYW43_WL_GPIO_LED_PIN, 1);
-    sleep_ms(250);
-    cyw43_arch_gpio_put(CYW43_WL_GPIO_LED_PIN, 0);
-    sleep_ms(250);
+    // cyw43_arch_gpio_put(CYW43_WL_GPIO_LED_PIN, 1);
+    // sleep_ms(250);
+    // cyw43_arch_gpio_put(CYW43_WL_GPIO_LED_PIN, 0);
+    // sleep_ms(250);
 
     sleep_ms(2000);
 }
 
+
+void LynkTree::Debug(std::string message)
+{
+    debugMsg_.publish(message.c_str());
+}
