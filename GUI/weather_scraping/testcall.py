@@ -1,4 +1,3 @@
-# main.py
 from weather import Weather
 
 weather = Weather()
