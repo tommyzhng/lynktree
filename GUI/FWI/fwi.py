@@ -2,9 +2,10 @@ import sys
 import os.path
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 import math
+import json
 
 # Need the temp + humidity from Hari + Tommy
-from weather_scraping.weather import Weather
+from subscriber.subscriber import Subscriber
 
 class FWI:
     def __init__(self):
@@ -12,11 +13,12 @@ class FWI:
         self.month = "March" # Needed for the DMC
         
         self.rainfall_0 = 0
-        self.humidity_0 = 0
-        self.wind_speed_0 = 0
-        self.temperature_0 = 0
 
         self.vm = 0 #Needed for ISI calculation, obtained from FMCC
+
+        self.fmcc = 0
+        self.dmc = 0
+        self.dc = 0
 
         self.fmcc_0 = 0
         self.dmc_0 = 0
@@ -27,12 +29,41 @@ class FWI:
         self.wind_speed = 0
         self.temperature = 0
 
+        self.__update()
+
     def __update(self):
         #Update the current rainfall, humidity etc.. values
-        pass
-    
-    def __FMCC(self):
+        #https://www.rdocumentation.org/packages/cffdrs/versions/1.8.20/topics/fwi for default values
+
+        sub = Subscriber()
+        weather_data = sub.curr_data['1']
+        self.temperature = weather_data['Temperature']
+        self.humidity = weather_data['Humidity']
+        self.rainfall = weather_data['Precipitation']
+        self.wind_speed = weather_data['Wind Speed']
         
+
+        #if file does not exist, use default values
+        if not os.path.exists("previous_data.txt"):
+            self.fmcc_0 = 85
+            self.dmc_0 = 6
+            self.dc_0 = 15
+            self.rainfall_0 = self.rainfall #Set the initial rainfall value to the current rainfall value
+        else:
+            with open("previous_data.txt", "r") as f:
+                prev_values_dict = json.loads(f.read())
+                self.fmcc_0 = prev_values_dict["FMCC"]
+                self.dmc_0 = prev_values_dict["DMC"]
+                self.dc_0 = prev_values_dict["DC"]
+                self.rainfall_0 = prev_values_dict["Rainfall"]
+    
+    def __save(self):
+        prev_values_dict = {"FMCC": self.fmcc, "DMC": self.dmc, "DC": self.dc, "Rainfall": self.rainfall}
+        with open("previous_data.txt", "w") as f:
+            f.write(json.dumps(prev_values_dict))
+        
+#Updates values
+    def __FMCC(self):  
         #Initalize variables
         vF_0 = self.fmcc_0
         vr_f =  self.rainfall
@@ -72,7 +103,7 @@ class FWI:
         vF = 59.5 * (250 - vm) / (147.2 + vm)
 
         self.vm = vm
-        return vF           
+        self.fmcc = vF         
         
     def __DMC(self):
         vP_0 = self.dmc_0
@@ -122,7 +153,7 @@ class FWI:
         else:
             vP = vP_0 + 100 * vK
 
-        return vP
+        self.dmc = vP
 
     def __DC(self):
         vr_0 = self.rainfall
@@ -157,8 +188,9 @@ class FWI:
         else:
             vD = vD_0 + 0.5 * vV
 
-        return vD
+        self.dc = vD
 
+#Returns values
     def __ISI(self):
         vW = self.wind_speed
         self.__FMCC() #Updates self.vm, value of FMCC never actually used
@@ -170,8 +202,11 @@ class FWI:
         return vR
     
     def __BUI(self):
-        vD = self.__DC()
-        vP = self.__DMC()
+        self.__DC()
+        self.__DMC()
+        
+        vD = self.dc
+        vP = self.dmc
         vU = 0
 
         if vP <= 0.4 * vD:
@@ -199,11 +234,9 @@ class FWI:
         
         return vS
 
+    def test(self):
+        self.__FWI()
+        self.__save()
 
-    def test(self, latitude, longitude):
-        weather = Weather()
-        return weather.get_weather(latitude, longitude)
-
-#Example usage
-f = FWI()
-print(f.test(40.7128, -74.0060)) #Expected output: {'Wind Speed': 7.2, 'Precipitation': 0.0}
+        #run update whenever you want to update the values
+        #self.__update()

@@ -4,7 +4,7 @@ import os
 import time
 import json
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
-from weather_scraping.Weather import Weather
+from weather_scraping.weather import Weather
 import paho.mqtt.client as mqtt
 
 class Subscriber:
@@ -37,7 +37,14 @@ class Subscriber:
             
     def __on_message(self, client, userdata, msg):
         module_name = msg.topic[-1] # get the module name from the topic
-        self.curr_data[module_name] = self.weather.get_weather(self.locations[module_name]["lat"], self.locations[module_name]["long"])
+        weather_data = self.weather.get_weather(self.locations[module_name]["lat"], self.locations[module_name]["long"])
+
+        # if the API call fails, return None - uncomment this if you want to see the error message - Alex
+        # if weather_data == None:
+        #     print("API call failed")
+
+        
+        self.curr_data[module_name] = weather_data
         value = json.loads(msg.payload.decode())  # Decode message
         self.curr_data[module_name].update(value)  # Update data dictionary
         self.curr_data[module_name]["time"] = time.strftime("%H:%M:%S")  # format in HH:MM:SS
