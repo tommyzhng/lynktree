@@ -4,7 +4,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 import math
 
 # Need the temp + humidity from Hari + Tommy
-from weather_scraping.Weather import Weather
+from weather_scraping.weather import Weather
 
 class FWI:
     def __init__(self):
@@ -15,6 +15,8 @@ class FWI:
         self.humidity_0 = 0
         self.wind_speed_0 = 0
         self.temperature_0 = 0
+
+        self.vm = 0 #Needed for ISI calculation, obtained from FMCC
 
         self.fmcc_0 = 0
         self.dmc_0 = 0
@@ -48,7 +50,7 @@ class FWI:
         if self.rainfall_0 > 0.5:
             vr_f -= 0.5
         
-            vm_r = vm_0 + 42.5*vr_f*(math.e**(-100/(251-vm_0))*(1-math.e**(-6.93/vr_f)))
+            vm_r = vm_0 + 42.5*vr_f*(math.exp(-100/(251-vm_0))*(1-math.exp(-6.93/vr_f)))
             if vm_0 > 150:
                 vm_r += 0.0015*(vm_0 - 150)**2 * vr_f**0.5
             if vm_r > 250:
@@ -69,6 +71,7 @@ class FWI:
         
         vF = 59.5 * (250 - vm) / (147.2 + vm)
 
+        self.vm = vm
         return vF           
         
     def __DMC(self):
@@ -157,14 +160,44 @@ class FWI:
         return vD
 
     def __ISI(self):
-        pass
+        vW = self.wind_speed
+        self.__FMCC() #Updates self.vm, value of FMCC never actually used
+        vm = self.vm
+
+        vf_W = math.exp(0.05039 * vW)
+        vf_F = 91.9 * math.exp(-0.1386 * vm) * (1 + vm**5.31 / (4.93 * 10**7))
+        vR = 0.208 * vf_W * vf_F
+        return vR
     
     def __BUI(self):
-        pass
+        vD = self.__DC()
+        vP = self.__DMC()
+        vU = 0
+
+        if vP <= 0.4 * vD:
+            vU = 0.8 * vP * vD / (vP + 0.4 * vD)
+        else:
+            vU = vP - (1 - 0.8 * vD / (vP + 0.4 * vD)) * (0.92 + (0.0114 * vP)**1.7)
+        return vU
 
     def __FWI(self):
-        pass
+        vU = self.__BUI()
+        vR = self.__ISI()
+        vFD = 0
+        vS = 0
+        if vU <= 80:
+            vFD = 0.626 * vU**0.809 + 2
+        else:
+            vFD = 1000 / (25 + 108.64 * math.exp(-0.023 * vU))
+        
+        vB = 0.1 * vR * vFD
 
+        if vB > 1:
+            vS = math.exp(2.72 * (0.434 * math.log(vB))**0.647)
+        else:
+            vS = vB
+        
+        return vS
 
 
     def test(self, latitude, longitude):
