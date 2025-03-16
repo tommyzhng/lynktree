@@ -48,10 +48,12 @@ class FWI:
         if self.rainfall_0 > 0.5:
             vr_f -= 0.5
         
-        vm_r = vm_0 + 42.5*vr_f*(math.e**(-100/(251-vm_0))*(1-math.e**(-6.93/vr_f)))
-        if vm_0 > 150:
-            vm_r += 0.0015*(vm_0 - 150)**2 * vr_f**0.5
-        vm_0 = vm_r
+            vm_r = vm_0 + 42.5*vr_f*(math.e**(-100/(251-vm_0))*(1-math.e**(-6.93/vr_f)))
+            if vm_0 > 150:
+                vm_r += 0.0015*(vm_0 - 150)**2 * vr_f**0.5
+            if vm_r > 250:
+                vm_r = 250
+            vm_0 = vm_r
         
         vE_d = 0.942 * vH**0.679 + 11 * math.exp((vH - 100) / 10) + 0.18 * (21.1 - vT) * (1 - math.exp(-0.115 * vH))
 
@@ -68,7 +70,6 @@ class FWI:
         vF = 59.5 * (250 - vm) / (147.2 + vm)
 
         return vF           
-        
         
     def __DMC(self):
         vP_0 = self.dmc_0
