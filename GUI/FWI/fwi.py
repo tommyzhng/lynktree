@@ -54,7 +54,9 @@ class FWI:
             self.time_0 = self.time
         else:
             with open(os.path.join(os.path.dirname(__file__)), "previous_data/previous_data"+str(id)+".json", "r") as f:
-                prev_values_dict = json.loads(f.read())
+                #get only the last line of the file
+                prev_values_dict = json.loads(f.readlines()[-1])
+                # prev_values_dict = json.loads(f.read())
                 self.fmcc_0 = prev_values_dict["FMCC"]
                 self.dmc_0 = prev_values_dict["DMC"]
                 self.dc_0 = prev_values_dict["DC"]
@@ -62,9 +64,9 @@ class FWI:
                 self.time_0 = prev_values_dict["time"]
     
     #Save values into json file for future calculations
-    def __save(self):
+    def __save(self, id):
         prev_values_dict = {"FMCC": self.fmcc, "DMC": self.dmc, "DC": self.dc, "Rainfall": self.rainfall}
-        with open("previous_data.json", "w") as f:
+        with open(os.path.join(os.path.dirname(__file__)), "previous_data/previous_data"+str(id)+".json", "a") as f:
             f.write(json.dumps(prev_values_dict))
         
 #Updates values, needs to be saved
@@ -299,7 +301,7 @@ class FWI:
         self.__update(weather_data, id)
         self.__error(id)
         fwi = self.__FWI()
-        self.__save()
+        self.__save(id)
         return fwi
 
 #Test code
