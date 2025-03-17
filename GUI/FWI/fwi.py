@@ -3,6 +3,7 @@ import os.path
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 import math
 import json
+import time
 
 # Need the temp + humidity from Hari + Tommy
 from subscriber.subscriber import Subscriber
@@ -29,16 +30,15 @@ class FWI:
         self.wind_speed = 0
         self.temperature = 0
 
-        self.__update()
-
     def __update(self):
         #Update the current rainfall, humidity etc.. values
         #https://www.rdocumentation.org/packages/cffdrs/versions/1.8.20/topics/fwi for default values
 
         sub = Subscriber()
+        time.sleep(7)
         weather_data = sub.curr_data['1']
-        self.temperature = weather_data['Temperature']
-        self.humidity = weather_data['Humidity']
+        self.temperature = weather_data['temperature']
+        self.humidity = weather_data['humidity']
         self.rainfall = weather_data['Precipitation']
         self.wind_speed = weather_data['Wind Speed']
         
@@ -50,7 +50,7 @@ class FWI:
             self.dc_0 = 15
             self.rainfall_0 = self.rainfall #Set the initial rainfall value to the current rainfall value
         else:
-            with open("previous_data.txt", "r") as f:
+            with open("previous_data.json", "r") as f:
                 prev_values_dict = json.loads(f.read())
                 self.fmcc_0 = prev_values_dict["FMCC"]
                 self.dmc_0 = prev_values_dict["DMC"]
@@ -59,10 +59,10 @@ class FWI:
     
     def __save(self):
         prev_values_dict = {"FMCC": self.fmcc, "DMC": self.dmc, "DC": self.dc, "Rainfall": self.rainfall}
-        with open("previous_data.txt", "w") as f:
+        with open("previous_data.json", "w") as f:
             f.write(json.dumps(prev_values_dict))
         
-#Updates values
+#Updates values, needs to be saved
     def __FMCC(self):  
         #Initalize variables
         vF_0 = self.fmcc_0
@@ -103,7 +103,7 @@ class FWI:
         vF = 59.5 * (250 - vm) / (147.2 + vm)
 
         self.vm = vm
-        self.fmcc = vF         
+        self.fmcc = vF
         
     def __DMC(self):
         vP_0 = self.dmc_0
@@ -139,8 +139,8 @@ class FWI:
             vM_r = vM_0 + 1000 * vr_e / (48.77 + vb * vr_e)
             vP_r = 244.72 - 43.43 * math.log(vM_r - 20)
 
-        if vP_r < 0:
-            vP_r = 0
+            if vP_r < 0:
+                vP_r = 0
         
         if vT < -1.1:
             vT = -1.1
@@ -235,8 +235,16 @@ class FWI:
         return vS
 
     def test(self):
-        self.__FWI()
+        self.__update()
+        fwi = self.__FWI()
         self.__save()
+        return fwi
 
-        #run update whenever you want to update the values
-        #self.__update()
+if __name__ == "__main__":
+    print("Testing FWI")
+    fwi = FWI()
+    while(True):
+        print("temperature:", fwi.temperature, "humidity:", fwi.humidity, "rainfall:", fwi.rainfall, "wind_speed:", fwi.wind_speed)
+        print("FMCC:", fwi.fmcc, "DMC:", fwi.dmc, "DC:", fwi.dc)
+        print(fwi.test())
+        time.sleep(5)
