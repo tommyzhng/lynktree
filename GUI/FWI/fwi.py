@@ -14,6 +14,7 @@ class FWI:
         self.month = "March" #Needed for the DMC and DC
         
         self.rainfall_0 = 0 #Initial rainfall set to 0
+        self.time_0 = 0 #Previous value of time used to determine if sensor stops working
 
         self.vm = 0 #Needed for ISI calculation, obtained from FMCC
 
@@ -32,33 +33,38 @@ class FWI:
         self.humidity = 0
         self.wind_speed = 0
         self.temperature = 0
+        self.time = 0
 
-    def __update(self):
+    def __update(self, weather_data, id):
         #Update the current rainfall, humidity etc.. values
         #https://www.rdocumentation.org/packages/cffdrs/versions/1.8.20/topics/fwi for default values
-
-        #Obtaining data
-        sub = Subscriber()
-        time.sleep(7)
-        weather_data = sub.curr_data['1']
+        
         self.temperature = weather_data['temperature']
         self.humidity = weather_data['humidity']
         self.rainfall = weather_data['Precipitation']
         self.wind_speed = weather_data['Wind Speed']
+        self.time = weather_data['time']
 
         #If file does not exist, use default values given by standards
-        if not os.path.exists("previous_data.txt"):
+        if not os.path.exists(os.path.join(os.path.dirname(__file__)), "previous_data/previous_data"+str(id)+".json"):
             self.fmcc_0 = 85
             self.dmc_0 = 6
             self.dc_0 = 15
             self.rainfall_0 = self.rainfall #Set the initial rainfall value to the current rainfall value
+            self.time_0 = self.time
         else:
-            with open("previous_data.json", "r") as f:
+            with open(os.path.join(os.path.dirname(__file__)), "previous_data/previous_data"+str(id)+".json", "r") as f:
                 prev_values_dict = json.loads(f.read())
                 self.fmcc_0 = prev_values_dict["FMCC"]
                 self.dmc_0 = prev_values_dict["DMC"]
                 self.dc_0 = prev_values_dict["DC"]
                 self.rainfall_0 = prev_values_dict["Rainfall"]
+                self.time_0 = prev_values_dict["time"]
+
+        #time format is HH:MM:SS
+        #if more than 30 seconds have passed, print error
+        if int(self.time[6:8]) - int(self.time_0[6:8]) > 30:
+            print("Sensor "+str(id)+" not working for: "+str(int(self.time[6:8]) - int(self.time_0[6:8]))+" seconds")
     
     #Save values into json file for future calculations
     def __save(self):
@@ -286,8 +292,9 @@ class FWI:
         
         return vS #FWI value (final form)
 
-    def test(self):
-        self.__update()
+    def test(self, weather_data, id):
+        #Obtaining data
+        self.__update(weather_data, id)
         fwi = self.__FWI()
         self.__save()
         return fwi
@@ -295,10 +302,12 @@ class FWI:
 #Test code
 
 if __name__ == "__main__":
-    print("Testing FWI")
+    sub = Subscriber()
+    time.sleep(5)
     fwi = FWI()
-    while(True):
-        print("temperature:", fwi.temperature, "humidity:", fwi.humidity, "rainfall:", fwi.rainfall, "wind_speed:", fwi.wind_speed)
-        print("FMCC:", fwi.fmcc, "DMC:", fwi.dmc, "DC:", fwi.dc)
-        print(fwi.test())
+    while True:
+        for i in sub.curr_data.keys():
+            weather_data = sub.curr_data[i]
+            fwi.__update(weather_data, i)
+            print("fwi:", fwi.test(weather_data, i))
         time.sleep(5)
