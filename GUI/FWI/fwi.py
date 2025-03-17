@@ -60,11 +60,6 @@ class FWI:
                 self.dc_0 = prev_values_dict["DC"]
                 self.rainfall_0 = prev_values_dict["Rainfall"]
                 self.time_0 = prev_values_dict["time"]
-
-        #time format is HH:MM:SS
-        #if more than 30 seconds have passed, print error
-        if int(self.time[6:8]) - int(self.time_0[6:8]) > 30:
-            print("Sensor "+str(id)+" not working for: "+str(int(self.time[6:8]) - int(self.time_0[6:8]))+" seconds")
     
     #Save values into json file for future calculations
     def __save(self):
@@ -292,9 +287,17 @@ class FWI:
         
         return vS #FWI value (final form)
 
+    def __error(self):
+        #If the sensor stops working, return an error message
+        #time format is HH:MM:SS
+        #if more than 30 seconds have passed, print error
+        if int(self.time[6:8]) - int(self.time_0[6:8]) > 30:
+            print("Sensor "+str(id)+" not working for: "+str(int(self.time[6:8]) - int(self.time_0[6:8]))+" seconds")
+
     def test(self, weather_data, id):
         #Obtaining data
         self.__update(weather_data, id)
+        self.__error()
         fwi = self.__FWI()
         self.__save()
         return fwi
