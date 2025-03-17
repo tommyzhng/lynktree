@@ -287,7 +287,7 @@ class FWI:
         
         return vS #FWI value (final form)
 
-    def __error(self):
+    def __error(self, id):
         #If the sensor stops working, return an error message
         #time format is HH:MM:SS
         #if more than 30 seconds have passed, print error
@@ -297,7 +297,7 @@ class FWI:
     def test(self, weather_data, id):
         #Obtaining data
         self.__update(weather_data, id)
-        self.__error()
+        self.__error(id)
         fwi = self.__FWI()
         self.__save()
         return fwi
