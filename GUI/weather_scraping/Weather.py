@@ -1,4 +1,3 @@
-
 #Set-ExecutionPolicy -ExecutionPolicy Unrestricted -Scope CurrentUser
 #venv\scripts\activate
 
@@ -43,3 +42,14 @@ class Weather:
             return weather_data_dict
         else:
             return None
+
+# if __name__ == "__main__":
+#     weather = Weather()
+#     weather_data = weather.get_weather(latitude=-43.066667, longitude=171.026667) # Rainiest place on earth in Cropp River
+
+#     if weather_data:
+#         print(f"Weather Data for Cropp River:")
+#         print(f"Wind Speed: {weather_data['Wind Speed']} km/h")
+#         print(f"Precipitation: {weather_data['Precipitation']} mm")
+#     else:
+#         print("Failed to fetch weather data.")
