@@ -1,8 +1,12 @@
+"""
+This file is the main file, where everything is integrated and ran into the PyQt5 GUI
+
+Usage: gui.py
+"""
+
 import sys
-import subprocess
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtCore import QTimer, QThread
-#from FWI import FWI
 import gui
 
 
@@ -14,7 +18,6 @@ if __name__ == "__main__":
 
     maps = gui.MapsGUI(ui)
     maps.update_map()
-    
 
     LynktreeGUI.show()
     print("System Started")

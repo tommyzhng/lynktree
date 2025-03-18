@@ -1,5 +1,9 @@
-from PyQt5.QtCore import QUrl
-from PyQt5.QtWidgets import QApplication, QTabWidget, QVBoxLayout
+"""
+This maps file contains the relevant class for initializing a map within the GUI. Relevant functions include updating the map with labelling.
+
+Usage: import maps;  maps = MapsGUI()
+"""
+
 from PyQt5.QtWebEngineWidgets import QWebEngineView
 import folium
 
