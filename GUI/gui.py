@@ -13,6 +13,7 @@ if __name__ == "__main__":
     ui.setupUi(LynktreeGUI)
 
     maps = gui.MapsGUI(ui)
+    maps.update_map()
     
 
     LynktreeGUI.show()

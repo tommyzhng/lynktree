@@ -3,3 +3,19 @@
 .vscode/c_cpp_properties.json
 .vscode/launch.json
 .vscode/ipch
+
+
+# venv virtual Environment
+.venv/
+venv/
+.env/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# logs
+*.log
+*.tmp
+.DS_Store
+Thumbs.db
