@@ -5,6 +5,7 @@ LynkTree::LynkTree() {
     WifiSetup();
     MqttSetup();
     BmeSetup();
+    AccelSetup();
 }
 
 void LynkTree::WifiSetup() {
@@ -64,28 +65,51 @@ void LynkTree::BmeSetup()
 
 }
 
+void LynkTree::AccelSetup()
+{
+    if (!kxAccel_.begin(0x1E)) {
+        Debug("KX134 sensor not found!");
+        return;
+    }
+    Debug("KX134 sensor found!");
+
+    if (kxAccel_.softwareReset()){
+        Debug("KX134 software reset successful!");
+    } else {
+        Debug("KX134 software reset failed!");
+    }
+    sleep_ms(5);
+
+    kxAccel_.enableAccel(false);
+
+    kxAccel_.setRange(SFE_KX132_RANGE16G); // 16g Range
+    // kxAccel_.setRange(SFE_KX134_RANGE16G);         // 16g for the KX134
+    
+    kxAccel_.enableAccel();
+}
+
 
 void LynkTree::loop()
 {
     // data.publish(x_++);
-    bme68x_data bme_data;
-    auto result = bme_.read_forced(&bme_data);
+    auto result = bme_.read_forced(&bme_data_);
 
     // set up the JSON file
     StaticJsonDocument<200> jsonDoc;
-    jsonDoc["temperature"] = bme_data.temperature;
-    jsonDoc["humidity"] = bme_data.humidity;
+    jsonDoc["temperature"] = bme_data_.temperature;
+    jsonDoc["humidity"] = bme_data_.humidity;
 
     // serialize the JSON file
     char jsonBuffer[200];
     serializeJson(jsonDoc, jsonBuffer);
     data_.publish(jsonBuffer);
 
-    // add debug led
-    // cyw43_arch_gpio_put(CYW43_WL_GPIO_LED_PIN, 1);
-    // sleep_ms(250);
-    // cyw43_arch_gpio_put(CYW43_WL_GPIO_LED_PIN, 0);
-    // sleep_ms(250);
+    //check orientation
+    if (kxAccel_.freeFall()) {
+        Debug("device has fallen!");
+    } else {
+        kxAccel_.clearInterrupt();
+    }
 
     sleep_ms(5000);
 }

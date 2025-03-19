@@ -13,6 +13,9 @@
 #include <drivers/bme68x/bme68x.hpp>
 #include <bme68x_defs.h>
 #include <ArduinoJson.h>
+// for using the accelerometer
+#include <SPI.h>
+#include <SparkFun_KX13X.h>
 
 
 // definitions for communications
@@ -60,13 +63,16 @@ private:
         gpio_init(PICO_DEFAULT_LED_PIN);
         gpio_set_dir(PICO_DEFAULT_LED_PIN, GPIO_OUT);
     #endif
-
     void BmeSetup();
-
-    // data
-    //int32_t x_ = 2;
+    bme68x_data bme_data_;
 
     void Debug(std::string message);
     Adafruit_MQTT_Publish debugMsg_ = Adafruit_MQTT_Publish(&mqtt, AIO_USERNAME FEED_DEBUG NUM);
+
+    // accelerometer
+    SparkFun_KX132 kxAccel_;
+    //SparkFun_KX134 kxAccel_; // For the KX134, uncomment this and comment line above
+    outputData accel_data_;
+    void AccelSetup();
 };
 
