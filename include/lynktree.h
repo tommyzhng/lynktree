@@ -16,7 +16,10 @@
 // for using the accelerometer
 #include <SPI.h>
 #include <SparkFun_KX13X.h>
-
+// for checking the current battery
+#include <stdbool.h>
+#include <hardware/adc.h>
+#include <pico/float.h>
 
 // definitions for communications
 #define AIO_SERVER      "io.adafruit.com"
@@ -38,6 +41,11 @@
 
 // definitions for BME680 sensor
 #define SEALEVELPRESSURE_HPA (1013.25)
+
+//definitions for the battery check
+#define PICO_POWER_SAMPLE_COUNT 3
+#define PICO_FIRST_ADC_PIN 26
+
 
 class LynkTree
 {
@@ -74,5 +82,18 @@ private:
     //SparkFun_KX134 kxAccel_; // For the KX134, uncomment this and comment line above
     outputData accel_data_;
     void AccelSetup();
+
+    //battery status
+    int power_source(bool *battery_powered); //retunrs whether the device is on battery or on power source
+    int power_voltage(float *voltage); // retunrns the system voltage
+    void update_battery_status();
+    bool old_battery_status_ = false;
+    bool battery_status_ = true;
+    float old_voltage_ = -1;
+    const char *power_str_ = "UNKNOWN";
+    const float min_battery_volts_ = 3.0f;
+    const float max_battery_volts_ = 4.2f;
+    char percent_buf_[10] = {0};
+    
 };
 
