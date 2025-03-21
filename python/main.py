@@ -17,16 +17,16 @@ if __name__ == "__main__":
     sub = Subscriber()
     time.sleep(5)
 
-    #only run fwi calculation and update sub every n minutes and print the data every m minute
-    n = 30
-    m = 1
+    UPDATE_INTERVAL = 30 #For FWI update (Minutes)
+    PRINT_INTERVAL = 1 #For printing data for GUI to read (Minutes)
+
+    n = 0
     while True:
-        n -= 1
         if n == 0:
             get_fire_weather_index(sub)
-            n = 30
+            n = UPDATE_INTERVAL
 
         print(json.dumps(sub.curr_data)) #(, indent=4?) What is this for?
         # time.sleep(60*m) # sleep for m minutes
         time.sleep(5)
-        
+        n -= 1        
