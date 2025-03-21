@@ -8,11 +8,11 @@ LynkTree::LynkTree() {
     AccelSetup();
 }
 
+
 void LynkTree::WifiSetup() {
     if (cyw43_arch_init()) {
         return;
     }
-
 
     WiFi.begin(SSID, PASSWORD);
 
@@ -20,7 +20,7 @@ void LynkTree::WifiSetup() {
     int attempt = 0;
     while (WiFi.status() != WL_CONNECTED && attempt < 20) {
         delay(500);
-        Serial.print(".");
+        //Serial.print(".");
     }
 }
 
@@ -52,46 +52,63 @@ void LynkTree::MqttSetup()
         // }
 
     }
-    Debug("MQTT Connected!");
+    // Debug("MQTT Connected!");
 }
 
 void LynkTree::BmeSetup()
 {
     if (!bme_.init()) {
-        Debug("BME680 sensor not found!");
+        // Debug("BME680 sensor not found!");
         return;
     }
-    Debug("BME680 sensor found!");
+    // Debug("BME680 sensor found!");
 
 }
 
 void LynkTree::AccelSetup()
 {
-    if (!kxAccel_.begin(0x1E)) {
-        Debug("KX134 sensor not found!");
+    Wire.begin();
+
+    if (!kxAccel_.begin()) {
+        // Debug("KX132 sensor not found!");
         return;
     }
-    Debug("KX134 sensor found!");
+    // Debug("KX132 sensor found!");
+
+    sleep_ms(500);
 
     if (kxAccel_.softwareReset()){
-        Debug("KX134 software reset successful!");
+        // Debug("KX132 software reset successful!");
     } else {
-        Debug("KX134 software reset failed!");
+        // Debug("KX132 software reset failed!");
     }
     sleep_ms(5);
 
     kxAccel_.enableAccel(false);
 
-    kxAccel_.setRange(SFE_KX132_RANGE16G); // 16g Range
+    kxAccel_.setRange(SFE_KX132_RANGE2G); // 16g Range
     // kxAccel_.setRange(SFE_KX134_RANGE16G);         // 16g for the KX134
+
+    kxAccel_.enableTiltEngine(true);
+    // kxAccel_.enableSleepEngine(true);
+    // kxAccel_.enableWakeEngine(true);
     
-    kxAccel_.enableAccel();
+    kxAccel_.enableAccel(true);
+
+    sleep_ms(20);
+
+    kxAccel_.tiltChange(); // 0x01 = 0.063g
+    kxAccel_.clearInterrupt();
+
+    // kxAccel_.forceSleep();
+
 }
 
 int LynkTree::power_source(bool *battery_powered)
 {
     #if defined CYW43_WL_GPIO_VBUS_PIN
         *battery_powered = !cyw43_arch_gpio_get(CYW43_WL_GPIO_VBUS_PIN);
+        Debug("Power source pin defined");
         return PICO_OK;
     #endif
     Debug("No power source pin defined");
@@ -182,14 +199,19 @@ void LynkTree::loop()
     data_.publish(jsonBuffer);
 
     //check orientation
-    if (kxAccel_.freeFall()) {
-        Debug("device has fallen!");
+    if (kxAccel_.tiltChange()) {
+        Debug("device has moved!");
     } else {
+        Debug("No Fall");
         kxAccel_.clearInterrupt();
     }
+    kxAccel_.clearInterrupt();
+   
+    // sleep_ms(5);
+    // Debug(kxAccel_.getOperatingMode() == 0 ? "Low Power Mode" : "High Power Mode");
 
-    update_battery_status();
-    Debug(("Current battery level:" + String(percent_buf_)).c_str());
+    //update_battery_status();
+    //Debug(("Current battery level:" + String(percent_buf_)).c_str());
 
     sleep_ms(5000);
 }

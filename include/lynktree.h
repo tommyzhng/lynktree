@@ -63,10 +63,12 @@ private:
     Adafruit_MQTT_Client mqtt{&client_, AIO_SERVER, AIO_SERVERPORT, AIO_USERNAME, AIO_KEY};
     // publishers
     Adafruit_MQTT_Publish data_ = Adafruit_MQTT_Publish(&mqtt, AIO_USERNAME FEED NUM);
-    
+    void Debug(std::string message);
+    Adafruit_MQTT_Publish debugMsg_ = Adafruit_MQTT_Publish(&mqtt, AIO_USERNAME FEED_DEBUG NUM);
+
     // BME680
-    pimoroni::I2C i2c{pimoroni::BOARD::BREAKOUT_GARDEN};
-    pimoroni::BME68X bme_{&i2c};
+    pimoroni::I2C i2c_bme{pimoroni::BOARD::BREAKOUT_GARDEN};
+    pimoroni::BME68X bme_{&i2c_bme};
     #ifdef PICO_DEFAULT_LED_PIN
         gpio_init(PICO_DEFAULT_LED_PIN);
         gpio_set_dir(PICO_DEFAULT_LED_PIN, GPIO_OUT);
@@ -74,11 +76,9 @@ private:
     void BmeSetup();
     bme68x_data bme_data_;
 
-    void Debug(std::string message);
-    Adafruit_MQTT_Publish debugMsg_ = Adafruit_MQTT_Publish(&mqtt, AIO_USERNAME FEED_DEBUG NUM);
-
     // accelerometer
-    SparkFun_KX132 kxAccel_;
+    //i2c object
+    SparkFun_KX132 kxAccel_; // For the KX132, uncomment this and comment line below
     //SparkFun_KX134 kxAccel_; // For the KX134, uncomment this and comment line above
     outputData accel_data_;
     void AccelSetup();
