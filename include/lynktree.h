@@ -84,16 +84,20 @@ private:
     void AccelSetup();
 
     //battery status
-    int power_source(bool *battery_powered); //retunrs whether the device is on battery or on power source
-    int power_voltage(float *voltage); // retunrns the system voltage
+    void BatterySetup();
     void update_battery_status();
-    bool old_battery_status_ = false;
-    bool battery_status_ = true;
-    float old_voltage_ = -1;
-    const char *power_str_ = "UNKNOWN";
-    const float min_battery_volts_ = 3.0f;
-    const float max_battery_volts_ = 4.2f;
-    char percent_buf_[10] = {0};
+    void power_voltage(float *voltage);
+
+    bool using_battery_;
+    const float min_battery_volts_ = 1.25;
+    const float max_battery_volts_ = 1.7;
+    int battery_percent_;
+
+    //RGB LED connections with the pico w
+    const uint8_t red_led = 17;
+    const uint8_t green_led = 18;
+    const uint8_t blue_led = 19;
+    void RGBSetup();
     
 };
 
