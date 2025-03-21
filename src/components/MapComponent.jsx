@@ -20,17 +20,11 @@ const MapComponent = () => {
 
       <style jsx>{`
         .map-wrapper {
-          height: calc(100vh - 2rem); /* Full height minus top/bottom margin */
-          width: 70vw;
+          height: calc(100% - 2rem); /* Full height minus top/bottom margin */
+          width: calc(100% - 2rem);
           overflow: hidden;
           border-radius: 40px;
-          margin: 0 auto;
-          position: absolute;
-          margin-left: 2rem; /* Adds space from the left edge */
-          margin-top: 1rem; /* Optional: adds space from the top */
-          margin-bottom: 1rem; /* Optional: adds space from the bottom */
         }
-
         .map-container {
           height: 100% !important;
           width: 100% !important;
