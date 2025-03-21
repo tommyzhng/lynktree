@@ -1,14 +1,41 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, setNumbers } from "react";
 import MapComponent from "./components/MapComponent";
 
 const App = () => {
   const [isAdmin, setIsAdmin] = useState(false);
   const [ffmcNum] = useState(85);
+  const [numbers, setNumbers] = useState(null);
 
   const handleLogin = () => {
     setIsAdmin(!isAdmin);
     alert(isAdmin ? "Logged out" : "Logged in as Admin");
   };
+
+  useEffect(() => {
+    const fetchData = () => {
+      fetch("http://localhost:3001/api/numbers")
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+          }
+          return response.json();
+        })
+        .then((data) => {
+          setNumbers(data);
+        })
+        .catch((error) => {
+          console.error("Error fetching data:", error);
+        });
+    };
+
+    // Initial fetch
+    fetchData();
+    // Set up interval polling
+    const intervalId = setInterval(fetchData, 5000); // adjust interval as needed
+
+    // Cleanup on unmount
+    return () => clearInterval(intervalId);
+  }, []);
 
   return (
     <div
@@ -74,7 +101,11 @@ const App = () => {
           </button>
           <div className="p-4 bg-white rounded shadow">
             <p className="text-lg font-semibold">FFMC Num</p>
-            <p className="text-xl">{ffmcNum}</p>
+            {/* <p className="text-xl">{data.1}</p>*/}
+            {/* ✅ Display first temperature value */}
+            {numbers && numbers["1"] && (
+              <p className="text-lg">Temperature: {numbers["1"].temp}°C</p>
+            )}
           </div>
       </div>
     </div>
