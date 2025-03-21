@@ -46,16 +46,17 @@ class FWI:
         self.time = weather_data['time']
 
         #If file does not exist, use default values given by standards
-        if not os.path.exists(os.path.join(os.path.dirname(__file__)), "previous_data/previous_data"+str(id)+".json"):
+        if not os.path.exists(os.path.join(os.path.dirname(__file__), "previous_data/previous_data"+str(id)+".json")):
             self.fmcc_0 = 85
             self.dmc_0 = 6
             self.dc_0 = 15
             self.rainfall_0 = self.rainfall #Set the initial rainfall value to the current rainfall value
             self.time_0 = self.time
         else:
-            with open(os.path.join(os.path.dirname(__file__)), "previous_data/previous_data"+str(id)+".json", "r") as f:
-                #get only the last line of the file
-                prev_values_dict = json.loads(f.readlines()[-1])
+            with open(os.path.join(os.path.dirname(__file__), "previous_data/previous_data"+str(id)+".json"), "r") as f:
+                # #get only the last line of the file
+                # prev_values_dict = json.loads(f.readlines()[-1])
+                prev_values_dict = json.loads(f.read())
                 # prev_values_dict = json.loads(f.read())
                 self.fmcc_0 = prev_values_dict["FMCC"]
                 self.dmc_0 = prev_values_dict["DMC"]
@@ -65,8 +66,8 @@ class FWI:
     
     #Save values into json file for future calculations
     def __save(self, id):
-        prev_values_dict = {"FMCC": self.fmcc, "DMC": self.dmc, "DC": self.dc, "Rainfall": self.rainfall}
-        with open(os.path.join(os.path.dirname(__file__)), "previous_data/previous_data"+str(id)+".json", "a") as f:
+        prev_values_dict = {"FMCC": self.fmcc, "DMC": self.dmc, "DC": self.dc, "Rainfall": self.rainfall, "time": self.time}
+        with open(os.path.join(os.path.dirname(__file__), "previous_data/previous_data"+str(id)+".json"), "w") as f:
             f.write(json.dumps(prev_values_dict))
         
 #Updates values, needs to be saved
@@ -308,11 +309,13 @@ class FWI:
 
 if __name__ == "__main__":
     sub = Subscriber()
-    time.sleep(5)
+    time.sleep(7)
+    print(sub.curr_data)
     fwi = FWI()
     while True:
         for i in sub.curr_data.keys():
             weather_data = sub.curr_data[i]
-            fwi.__update(weather_data, i)
-            print("fwi:", fwi.test(weather_data, i))
+            fwi.test(weather_data, i)
+            print("FWI:", fwi.test(weather_data, i))
+            print("FMCC:", fwi.fmcc, "DMC:", fwi.dmc, "DC:", fwi.dc, "Rainfall:", fwi.rainfall, "temperature:", fwi.temperature, "humidity:", fwi.humidity, "wind_speed:", fwi.wind_speed, "time:", fwi.time)
         time.sleep(5)
