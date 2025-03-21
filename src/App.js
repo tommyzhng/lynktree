@@ -3,7 +3,7 @@ import MapComponent from "./components/MapComponent";
 
 const App = () => {
   const [isAdmin, setIsAdmin] = useState(false);
-  const [ffmcNum] = useState(85);
+  // const [ffmcNum] = useState(85);
   const [numbers, setNumbers] = useState(null);
 
   const handleLogin = () => {
@@ -31,7 +31,7 @@ const App = () => {
     // Initial fetch
     fetchData();
     // Set up interval polling
-    const intervalId = setInterval(fetchData, 5000); // adjust interval as needed
+    const intervalId = setInterval(fetchData, 500); // adjust interval as needed
 
     // Cleanup on unmount
     return () => clearInterval(intervalId);
@@ -100,12 +100,30 @@ const App = () => {
             {isAdmin ? "Logout Admin" : "Login Admin"}
           </button>
           <div className="p-4 bg-white rounded shadow">
-            <p className="text-lg font-semibold">FFMC Num</p>
-            {/* <p className="text-xl">{data.1}</p>*/}
-            {/* ✅ Display first temperature value */}
-            {numbers && numbers["1"] && (
-              <p className="text-lg">Temperature: {numbers["1"].temp}°C</p>
+          <p className="text-lg">
+            Backend Status: {numbers && Object.keys(numbers).length > 0 ? (
+              <span className="text-green-600 font-semibold">Running ✅</span>
+            ) : (
+              <span className="text-red-600 font-semibold">Not Running ❌</span>
             )}
+          </p>
+
+          <h3 className="module-1" style={{ marginBottom: '0' }}>
+            Module 1: 
+          </h3>
+          <p className="text-lg" style={{ marginLeft: '10px', marginTop: '10px' }}>
+            Temperature: {numbers?.["1"]?.temp || "N/A"}
+            <br />
+            Humidity: {numbers?.["1"]?.humidity || "N/A"}
+            <br />
+            Wind Speed: {numbers?.["1"]?.wind_speed || "N/A"}
+            <br />  
+            FFMC: {numbers?.["1"]?.ffmc || "N/A"}
+            <br />
+            DMC: {numbers?.["1"]?.dmc || "N/A"}
+            <br />
+            DC: {numbers?.["1"]?.dc || "N/A"}
+          </p>
           </div>
       </div>
     </div>

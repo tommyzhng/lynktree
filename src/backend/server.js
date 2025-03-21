@@ -36,5 +36,20 @@ app.get('/api/numbers', (req, res) => {
   }
 });
 
+// Gracefully handle server shutdown
+process.on('SIGINT', () => {
+    console.log('Server shutting down...');
+    // Kill the Python process
+    pythonProcess.kill();  // Kill the Python process
+    latestData = {};
+    
+    // Wait 5 seconds before exiting
+    setTimeout(() => {
+        console.log('Exited after 1 seconds');
+        process.exit();  // Gracefully exit the server after 5 seconds
+    }, 1000);
+});
+
+
 const PORT = 3001;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
