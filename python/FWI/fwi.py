@@ -297,7 +297,7 @@ class FWI:
         if int(self.time[6:8]) - int(self.time_0[6:8]) > 30:
             print("Sensor "+str(id)+" not working for: "+str(int(self.time[6:8]) - int(self.time_0[6:8]))+" seconds")
 
-    def test(self, weather_data, id):
+    def run(self, weather_data, id):
         #Obtaining data
         self.__update(weather_data, id)
         self.__error(id)
@@ -309,13 +309,14 @@ class FWI:
 
 if __name__ == "__main__":
     sub = Subscriber()
-    time.sleep(7)
+    time.sleep(5)
     print(sub.curr_data)
     fwi = FWI()
-    while True:
-        for i in sub.curr_data.keys():
-            weather_data = sub.curr_data[i]
-            fwi.test(weather_data, i)
-            print("FWI:", fwi.test(weather_data, i))
-            print("FMCC:", fwi.fmcc, "DMC:", fwi.dmc, "DC:", fwi.dc, "Rainfall:", fwi.rainfall, "temperature:", fwi.temperature, "humidity:", fwi.humidity, "wind_speed:", fwi.wind_speed, "time:", fwi.time)
-        time.sleep(5)
+
+    for i in sub.curr_data.keys():
+        weather_data = sub.curr_data[i]
+        vFWI = fwi.run(weather_data, i)
+        #Make dict of all important values
+
+        ret = {"FWI": vFWI, "FMCC": fwi.fmcc, "DMC": fwi.dmc, "DC": fwi.dc, "time": fwi.time}
+        print(json.dumps(ret))

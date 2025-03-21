@@ -4,7 +4,7 @@ import os
 import time
 import json
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
-from weather_scraping.weather import Weather
+from weather_scraping import Weather
 import paho.mqtt.client as mqtt
 
 class Subscriber:
