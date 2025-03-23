@@ -90,13 +90,13 @@ private:
 
     bool using_battery_;
     const float min_battery_volts_ = 1.25;
-    const float max_battery_volts_ = 1.7;
+    const float max_battery_volts_ = 1.65;
     int battery_percent_;
 
     //RGB LED connections with the pico w
-    const uint8_t red_led = 17;
-    const uint8_t green_led = 18;
-    const uint8_t blue_led = 19;
+    const uint8_t red_led_ = 17;
+    const uint8_t green_led_ = 18;
+    const uint8_t blue_led_ = 19;
     void RGBSetup();
     
 };

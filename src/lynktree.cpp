@@ -2,11 +2,11 @@
 
 LynkTree::LynkTree() {
     Serial.begin(115200);
-    BatterySetup();
     WifiSetup();
     MqttSetup();
     BmeSetup();
     AccelSetup();
+    BatterySetup();
 }
 
 void LynkTree::BatterySetup()
@@ -18,14 +18,14 @@ void LynkTree::BatterySetup()
         Debug("Powered by USB");
         using_battery_ = false;
     }
-
+    pinMode(26, INPUT);
 }
 
 void LynkTree::RGBSetup() {
     // Set up the RGB LED
-    pinMode(red_led, OUTPUT);
-    pinMode(green_led, OUTPUT);
-    pinMode(blue_led, OUTPUT);
+    pinMode(red_led_, OUTPUT);
+    pinMode(green_led_, OUTPUT);
+    pinMode(blue_led_, OUTPUT);
 }
 
 void LynkTree::WifiSetup() {
@@ -71,7 +71,7 @@ void LynkTree::MqttSetup()
         // }
 
     }
-    Debug("MQTT Connected!");
+    // Debug("MQTT Connected!");
 }
 
 void LynkTree::BmeSetup()
@@ -80,7 +80,7 @@ void LynkTree::BmeSetup()
         Debug("BME680 sensor not found!");
         return;
     }
-    Debug("BME680 sensor found!");
+    // Debug("BME680 sensor found!");
 
 }
 
@@ -120,27 +120,30 @@ void LynkTree::AccelSetup()
     kxAccel_.clearInterrupt();
 
     // kxAccel_.forceSleep();
-    Debug("Kx132 setup complete!");
+    // Debug("Kx132 setup complete!");
 }
 
 void LynkTree::update_battery_status()
 {
+    // Take an analog reading from GP26 (ADC0)
+    int adc_value = analogRead(26);  // Reads a value between 0 and 1023 (10-bit resolution)
+
+    // Convert ADC reading to voltage
+    float voltage = adc_value * (3.3f / 1023.0f);
     
-    // read the voltage at the adc0 pin
-    adc_select_input(0);
-    const float conversionFactor = 3.3f / (1 << 12);
-    float voltage = (float)adc_read() * conversionFactor;
+    //Debug(((String)voltage).c_str());
 
     voltage = floorf(voltage * 100) / 100; //2 decimals
 
     // Display power if it's changed
     battery_percent_ = (int) (((voltage - min_battery_volts_) / (max_battery_volts_ - min_battery_volts_)) * 100);
+    Debug(((String)battery_percent_).c_str());
 }   
 
 void LynkTree::loop()
 {
     // data.publish(x_++);
-    auto result = bme_.read_forced(&bme_data_);
+    // auto result = bme_.read_forced(&bme_data_);
 
     // set up the JSON file
     StaticJsonDocument<200> jsonDoc;
@@ -161,13 +164,9 @@ void LynkTree::loop()
     }
     kxAccel_.clearInterrupt();
    
-    // sleep_ms(5);
-    // Debug(kxAccel_.getOperatingMode() == 0 ? "Low Power Mode" : "High Power Mode");
     if (using_battery_) {
         update_battery_status();
     }
-
-    //Debug(("Current battery level:" + String(percent_buf_)).c_str());
 
     sleep_ms(5000);
 }
