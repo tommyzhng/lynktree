@@ -1,0 +1,96 @@
+/* src/components/Maps/MapComponent.css */
+.map-wrapper {
+  height: calc(100% - 2rem);
+  width: calc(100% - 2rem);
+  overflow: hidden;
+  border-radius: 20px;
+}
+
+.map-container {
+  height: 100% !important;
+  width: 100% !important;
+  z-index: 1; /* Ensure the map is below the popup */
+}
+
+/* Style the popup card */
+.landmark-card {
+  background-color: white;
+  padding: 1rem;
+  border-radius: 0.25rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
+  max-width: 300px;
+}
+
+.status {
+  font-size: 1.125rem;
+  margin-bottom: 0.5rem;
+}
+
+.module-title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.module-data p {
+  font-size: 1rem;
+  margin: 0.25rem 0;
+}
+
+.leaflet-custom-popup .leaflet-popup-tip-container {
+  display: none !important;
+}
+
+.leaflet-custom-popup .leaflet-popup-content-wrapper {
+  max-width: 360px !important; /* or even 400px */
+  width: max-content !important;
+  transform: translateX(-50%);
+  position: relative;
+}
+
+.leaflet-custom-popup .leaflet-popup-content {
+  margin: 0 !important;
+  width: 100% !important;
+}
+
+.landmark-card {
+  background-color: white;       /* Let Leaflet handle this */
+  padding: 1rem;                 /* Already has padding from Leaflet */
+  border-radius: 0.5rem;               /* Optional: you can keep this */
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2); /* Already handled */
+  max-width: 250px;
+  width: 100%;
+  font-size: 0.95rem;
+}
+
+
+/* Mobile adjustments */
+@media (max-width: 768px) {
+  .landmark-card {
+    max-width: 90%;
+  }
+
+  .status,
+  .module-title {
+    font-size: 1rem;
+  }
+
+  .module-data p {
+    font-size: 0.875rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .landmark-card {
+    padding: 0.5rem;
+  }
+
+  .status,
+  .module-title {
+    font-size: 0.9rem;
+  }
+
+  .module-data p {
+    font-size: 0.75rem;
+  }
+}
