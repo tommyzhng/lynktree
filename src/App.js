@@ -112,7 +112,7 @@ const App = () => {
             Module 1: 
           </h3>
           <p className="text-lg" style={{ marginLeft: '10px', marginTop: '10px' }}>
-            Temperature: {numbers?.["1"]?.temp || "N/A"}
+            Temperature: {numbers?.["1"]?.temperature || "N/A"}
             <br />
             Humidity: {numbers?.["1"]?.humidity || "N/A"}
             <br />
@@ -123,6 +123,27 @@ const App = () => {
             DMC: {numbers?.["1"]?.dmc || "N/A"}
             <br />
             DC: {numbers?.["1"]?.dc || "N/A"}
+            <br />
+            Status: {numbers?.["1"]?.error_code === 0 ? "Updating ✅" : numbers?.["1"]?.error_code === 1 ? "Lost Connection ❌" : numbers?.["1"]?.error_code === -1 ? "No Connection ❌" : "Error ❌"}
+          </p>
+
+          <h3 className="module-2" style={{ marginBottom: '0' }}>
+            Module 2:
+          </h3>
+          <p className="text-lg" style={{ marginLeft: '10px', marginTop: '10px' }}>
+            Temperature: {numbers?.["2"]?.temperature || "N/A"}
+            <br />
+            Humidity: {numbers?.["2"]?.humidity || "N/A"}
+            <br />
+            Wind Speed: {numbers?.["2"]?.wind_speed || "N/A"}
+            <br />
+            FFMC: {numbers?.["2"]?.ffmc || "N/A"}
+            <br />
+            DMC: {numbers?.["2"]?.dmc || "N/A"}
+            <br />
+            DC: {numbers?.["2"]?.dc || "N/A"}
+            <br />
+            Status: {numbers?.["2"]?.error_code === 0 ? "Updating ✅" : numbers?.["2"]?.error_code === 1 ? "Lost Connection ❌" : numbers?.["2"]?.error_code === -1 ? "No Connection ❌" : "Error ❌"}
           </p>
           </div>
       </div>

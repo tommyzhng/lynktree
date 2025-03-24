@@ -10,7 +10,13 @@ def get_fire_weather_index(sub):
         vFWI = fwi.run(weather_data, i)
         #Make dict of all important values
 
-        ret = {"FWI": vFWI, "FMCC": fwi.fmcc, "DMC": fwi.dmc, "DC": fwi.dc, "time": fwi.time}
+        #Check if the time difference between now and the last update is greater than 30 seconds, time format is HH:MM:SS
+        if time.time() - time.mktime(time.strptime(weather_data["time"], "%Y-%m-%d %H:%M:%S")) > 30:
+            sub.curr_data[i]["error_code"] = 1
+        else:
+            sub.curr_data[i]["error_code"] = 0
+
+        ret = {"FWI": vFWI, "FMCC": fwi.fmcc, "DMC": fwi.dmc, "DC": fwi.dc}
         sub.curr_data[i].append(ret)
 
 if __name__ == "__main__":
@@ -19,16 +25,19 @@ if __name__ == "__main__":
 
     UPDATE_INTERVAL = 30 #For FWI update (Minutes)
     PRINT_INTERVAL = 1 #For printing data for GUI to read (Seconds)
-
+    
     n = 0
     while True:
         if n == 0:
             get_fire_weather_index(sub)
             n = UPDATE_INTERVAL
-
-        # print(json.dumps(sub.curr_data)) #(, indent=4?) What is this for?
-        test_data = {'1': {"temp": n, "humidity": 50, "wind_speed": 10, "rain": 0, "time": "2020-01-01 00:00:00"}, '2': {"temp": 20, "humidity": 50, "wind_speed": 10, "rain": 0, "time": "2020-01-01 00:00:00"}}
-        print(json.dumps(test_data), flush=True)
+        if len(sub.curr_data) == 0:
+            print(json.dumps({'1': {"error_code" : -1}, '2': {"error_code" : -1}}), flush=True)
+        else:
+            print(json.dumps(sub.curr_data), flush=True) #(, indent=4?) What is this for?
+        
+        # test_data = {'1': {"temperature": n, "humidity": 50, "wind_speed": 10, "rain": 0, "time": "2020-01-01 00:00:00", "error_code": 1}, '2': {"temperature": 20, "humidity": 50, "wind_speed": 10, "rain": 0, "time": "2020-01-01 00:00:00", "error_code": 0}}
+        # print(json.dumps(test_data), flush=True)
 
         time.sleep(PRINT_INTERVAL)
         n -= 1

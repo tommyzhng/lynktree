@@ -300,7 +300,7 @@ class FWI:
     def run(self, weather_data, id):
         #Obtaining data
         self.__update(weather_data, id)
-        self.__error(id)
+        # self.__error(id)
         fwi = self.__FWI()
         self.__save(id)
         return fwi
@@ -318,5 +318,5 @@ if __name__ == "__main__":
         vFWI = fwi.run(weather_data, i)
         #Make dict of all important values
 
-        ret = {"FWI": vFWI, "FMCC": fwi.fmcc, "DMC": fwi.dmc, "DC": fwi.dc, "time": fwi.time}
+        ret = {"FWI": vFWI, "FMCC": fwi.fmcc, "DMC": fwi.dmc, "DC": fwi.dc}
         print(json.dumps(ret))
