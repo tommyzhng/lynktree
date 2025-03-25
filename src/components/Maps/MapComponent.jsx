@@ -20,7 +20,12 @@ L.Icon.Default.mergeOptions({
   shadowUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
 });
 
-const landmarkPosition = [43.6625, -79.3955];
+// red icon url
+//iconUrl: "https://static-00.iconduck.com/assets.00/map-marker-icon-171x256-xkl73sge.png",
+
+
+const landmarkPosition = [43.66079512969152, -79.39653684895607];
+
 
 const CustomOverlay = ({ position, isOpen, children }) => {
   const map = useMap();
@@ -82,7 +87,7 @@ const MapComponent = ({ numbers }) => {
     5: "Error ⚠️"
   };
 
-  const fwi = numbers?.["1"]?.ffmc || 0;
+  const fwi = numbers?.["1"]?.fwi || 0;
   const getColor = (fwi) => {
     const ratio = Math.min(Math.max(fwi, 0), 100) / 100;
     const r = Math.round(255 * ratio);
@@ -160,6 +165,7 @@ const MapComponent = ({ numbers }) => {
                 <p>Humidity: {numbers?.["1"]?.humidity || "N/A"}</p>
                 <p>Wind Speed: {numbers?.["1"]?.wind_speed || "N/A"}</p>
                 <p>FWI: {numbers?.["1"]?.fwi || "N/A"}</p>
+                <p>Last Update Time: {numbers?.["1"]?.time || "N/A"}</p>
                 {/* <p>FFMC: {numbers?.["1"]?.fmcc || "N/A"}</p> */}
                 {/* <p>DMC: {numbers?.["1"]?.dmc || "N/A"}</p> */}
                 {/* <p>DC: {numbers?.["1"]?.dc || "N/A"}</p> */}

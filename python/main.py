@@ -1,5 +1,5 @@
 from subscriber import Subscriber
-from fwi import FWI
+from FWI import FWI
 import time
 from datetime import datetime
 import json
@@ -27,12 +27,11 @@ if __name__ == "__main__":
         #sub.curr_data gets overwritten by its own class, return_data will be a copy but does not get overwritten so the fmcc and other values will be saved
         for i in sub.curr_data.keys():
             return_data[i].update(sub.curr_data[i])
-
         if len(sub.curr_data) == 0:
             return_data = {'1': {"status_error_code" : 1}, '2': {"status_error_code" : 1}}
         else:
             for i in sub.curr_data.keys():
-                if sub.curr_data[i]["error_code"] == 0:
+                if sub.curr_data[i]["error_code"] != 3:
                     if n == 0:
                         get_fire_weather_index(sub, return_data, fwi, i)
                         n = UPDATE_INTERVAL
