@@ -1,15 +1,15 @@
 {
   "files": {
-    "main.css": "/lynktree/static/css/main.bafeddab.css",
-    "main.js": "/lynktree/static/js/main.ca242755.js",
+    "main.css": "/lynktree/static/css/main.8f3025aa.css",
+    "main.js": "/lynktree/static/js/main.a6560cf6.js",
     "static/js/453.e31f5092.chunk.js": "/lynktree/static/js/453.e31f5092.chunk.js",
     "index.html": "/lynktree/index.html",
-    "main.bafeddab.css.map": "/lynktree/static/css/main.bafeddab.css.map",
-    "main.ca242755.js.map": "/lynktree/static/js/main.ca242755.js.map",
+    "main.8f3025aa.css.map": "/lynktree/static/css/main.8f3025aa.css.map",
+    "main.a6560cf6.js.map": "/lynktree/static/js/main.a6560cf6.js.map",
     "453.e31f5092.chunk.js.map": "/lynktree/static/js/453.e31f5092.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.bafeddab.css",
-    "static/js/main.ca242755.js"
+    "static/css/main.8f3025aa.css",
+    "static/js/main.a6560cf6.js"
   ]
 }
