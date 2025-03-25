@@ -68,6 +68,19 @@ const MapComponent = ({ numbers }) => {
   const centerPosition = [43.6622993431624, -79.39552899809453];
   const [isCardOpen, setIsCardOpen] = useState(false);
   const [isClicked, setIsClicked] = useState(false);
+  const statusMessages = {
+    0: "Connected ✅",
+    1: "No Data ❌",
+    2: "Disconnected ❌",
+  };
+  const devicestatusMessages = {
+    0: "Connected ✅",
+    1: "No Data ❌",
+    2: "Disconnected ❌",
+    3: "Reconnecting 🔄",
+    4: "Timeout ⏳",
+    5: "Error ⚠️"
+  };
 
   const fwi = numbers?.["1"]?.ffmc || 0;
   const getColor = (fwi) => {
@@ -138,8 +151,11 @@ const MapComponent = ({ numbers }) => {
               </p>
               <h3 className="module-title">Module 1:</h3>
               <div className="module-data">
-                {/* if numbers.error_code == 0, working fine, -1, timeout, 1, error 1, else error 2 */}
-                <p>Status: {numbers?.["1"]?.error_code === 0 ? "Connected ✅" : numbers?.["1"]?.error_code === 1 ? "Disconnected ❌" : numbers?.["1"]?.error_code === -1 ? "No Data ❌" : "Error"}</p>
+                
+                {(() => {const status = numbers?.["1"]?.status_error_code;
+                  return <p>Status: {statusMessages[status] || "Unknown Status ❓"}</p>;
+                })()}
+                
                 <p>Temperature: {numbers?.["1"]?.temperature || "N/A"}</p>
                 <p>Humidity: {numbers?.["1"]?.humidity || "N/A"}</p>
                 <p>Wind Speed: {numbers?.["1"]?.wind_speed || "N/A"}</p>
