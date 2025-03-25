@@ -2,11 +2,16 @@
 
 LynkTree::LynkTree() {
     Serial.begin(115200);
+    RGBSetup();
     WifiSetup();
     MqttSetup();
     BmeSetup();
     AccelSetup();
     BatterySetup();
+    ErrorLED(0);
+    delay(5000);
+    digitalWrite(green_led_, HIGH);
+    run_ = 1;
 }
 
 void LynkTree::BatterySetup()
@@ -26,6 +31,32 @@ void LynkTree::RGBSetup() {
     pinMode(red_led_, OUTPUT);
     pinMode(green_led_, OUTPUT);
     pinMode(blue_led_, OUTPUT);
+    //set all pins to high to turn off the LED
+    digitalWrite(red_led_, HIGH);
+    digitalWrite(green_led_, HIGH);
+    digitalWrite(blue_led_, HIGH);
+}
+
+void LynkTree::ErrorLED(int error) {
+    //turn off all the LEDs
+    digitalWrite(red_led_, HIGH);
+    digitalWrite(green_led_, HIGH);
+    digitalWrite(blue_led_, HIGH);
+
+    //turn on the LED that corresponds to the error
+    switch (error) {
+        case 0:
+            digitalWrite(green_led_, LOW);
+            break;
+        case 1:
+            digitalWrite(red_led_, LOW);
+            break;
+        case 2:
+            digitalWrite(blue_led_, LOW);
+            break;
+        default:
+            break;
+    }
 }
 
 void LynkTree::WifiSetup() {
@@ -37,8 +68,13 @@ void LynkTree::WifiSetup() {
 
     // attempt to connect to the wifi network
     int attempt = 0;
-    while (WiFi.status() != WL_CONNECTED && attempt < 20) {
+    while (WiFi.status() != WL_CONNECTED && attempt < 11) {
         delay(500);
+        if (!run_ && attempt == 10) {
+            ErrorLED(1);
+            while(1);
+        }
+        attempt++;
         //Serial.print(".");
     }
 }
@@ -58,10 +94,11 @@ void LynkTree::MqttSetup()
         mqtt.disconnect();
         delay(5000);  // wait 1 seconds
         retries--;
-        if (retries == 0) {
-            // die and let watchdog reset
-            while (1);
-        }
+        if (!run_ && retries == 0) {
+                ErrorLED(1);
+                while(1);
+        }  
+        
         // for (int i = 0; i < ret+2; i++)
         // {
         //     cyw43_arch_gpio_put(CYW43_WL_GPIO_LED_PIN, 1);
@@ -78,6 +115,10 @@ void LynkTree::BmeSetup()
 {
     if (!bme_.init()) {
         // Debug("BME680 sensor not found!");
+        if (!run_) {
+            ErrorLED(2);
+            while(1);
+        }
         return;
     }
     // Debug("BME680 sensor found!");
@@ -90,6 +131,11 @@ void LynkTree::AccelSetup()
 
     if (!kxAccel_.begin()) {
         // Debug("KX132 sensor not found!");
+        if (!run_) {
+            ErrorLED(2);
+            delay(5000);
+            while(1);
+        }
         return;
     }
     //Debug("KX132 sensor found!");
@@ -156,22 +202,18 @@ void LynkTree::loop()
         MqttSetup();
     }
 
-    //check orientation
-    try{
-        if (kxAccel_.tiltChange()) {
-            error_code_ = 5;
+    if (kxAccel_.tiltChange()) {
+        if (error_code_ != 3) {
+            error_code_ = 4;
         }
-    } catch () {
-        // Debug("Failed to read KX132 sensor data");
-        error_code_ = 4;
-        AccelSetup();
     }
-   
+    
     if (using_battery_) {
         update_battery_status();
+        jsonDoc["battery_percent"] = battery_percent_;
         if (battery_percent_ < 10) {
             // Debug("Battery is low");
-            error_code_ = 6;
+            error_code_ = 5;
         }
     }
 
@@ -184,19 +226,26 @@ void LynkTree::loop()
     } else {
         // Debug("Failed to read BME680 sensor data");
         error_code_ = 3;
-        BmeSetup();
     }
     
     // add the error code and the battery percent to the JSON file
     jsonDoc["error_code"] = error_code_;
-    jsonDoc["battery_percent"] = battery_percent_;
 
     // serialize the JSON file
     char jsonBuffer[200];
     serializeJson(jsonDoc, jsonBuffer);
 
     //send the data
-    data_.publish(jsonBuffer);
+    if (!using_battery_){
+        //flash blue LED
+        digitalWrite(blue_led_, LOW);
+        sleep_ms(250);
+        digitalWrite(blue_led_, HIGH);
+        sleep_ms(250);
+    }
+    if (mqtt.connected()){
+        data_.publish(jsonBuffer);
+    }
 
     sleep_ms(5000);
 }
