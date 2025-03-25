@@ -98,6 +98,23 @@ private:
     const uint8_t green_led_ = 18;
     const uint8_t blue_led_ = 19;
     void RGBSetup();
+
+    //keep track of if there are any errors
+    // 0 = no error
+    // 1 = wifi error
+    // 2 = mqtt error
+    // 3 = bme diconnected
+    // 4 = accel disconnected
+    // 5 = accel position change
+    // 6 = low battery
+    int error_code_ = 0;
+    // the priority for sending the error is in order: 
+    // BME sensor disconnected
+    // low battery
+    // accel disconnected
+    // accel position change
+    // mqtt error
+    // wifi error
     
 };
 
