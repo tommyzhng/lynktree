@@ -66,9 +66,6 @@
 
 /* Mobile adjustments */
 @media (max-width: 768px) {
-  .landmark-card {
-    max-width: 90%;
-  }
 
   .status,
   .module-title {
