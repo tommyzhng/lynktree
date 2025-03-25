@@ -94,19 +94,20 @@ private:
     int battery_percent_;
 
     //RGB LED connections with the pico w
-    const uint8_t red_led_ = 17;
-    const uint8_t green_led_ = 18;
-    const uint8_t blue_led_ = 19;
+    const uint8_t red_led_ = 22;
+    const uint8_t green_led_ = 17;
+    const uint8_t blue_led_ = 18;
     void RGBSetup();
+    void ErrorLED(int error);
 
     //keep track of if there are any errors
     // 0 = no error
     // 1 = wifi error
     // 2 = mqtt error
     // 3 = bme diconnected
-    // 4 = accel disconnected
-    // 5 = accel position change
-    // 6 = low battery
+    // 4 = accel disconnected or position change
+    // 5 = low battery
+    int run_ = 0;
     int error_code_ = 0;
     // the priority for sending the error is in order: 
     // BME sensor disconnected
