@@ -11,7 +11,9 @@ from subscriber.subscriber import Subscriber
 class FWI:
     def __init__(self):
         #Previous variable - call on previous_data file
-        self.month = "March" #Needed for the DMC and DC
+        #Get current month
+        self.month = time.strftime("%B") #Get current month
+        # self.month = "March" #Needed for the DMC and DC
         
         self.rainfall_0 = 0 #Initial rainfall set to 0
         self.time_0 = 0 #Previous value of time used to determine if sensor stops working
@@ -41,8 +43,8 @@ class FWI:
         
         self.temperature = weather_data['temperature']
         self.humidity = weather_data['humidity']
-        self.rainfall = weather_data['Precipitation']
-        self.wind_speed = weather_data['Wind Speed']
+        self.rainfall = weather_data['precipitation']
+        self.wind_speed = weather_data['wind_speed']
         self.time = weather_data['time']
 
         #If file does not exist, use default values given by standards
@@ -66,9 +68,21 @@ class FWI:
     
     #Save values into json file for future calculations
     def __save(self, id):
-        prev_values_dict = {"FMCC": self.fmcc, "DMC": self.dmc, "DC": self.dc, "Rainfall": self.rainfall, "time": self.time}
-        with open(os.path.join(os.path.dirname(__file__), "previous_data/previous_data"+str(id)+".json"), "w") as f:
-            f.write(json.dumps(prev_values_dict))
+        # Define the directory path
+        directory = os.path.join(os.path.dirname(__file__), "previous_data")
+        
+        # Create the directory if it doesn't exist
+        os.makedirs(directory, exist_ok=True)
+        file_path = os.path.join(directory, f"previous_data{id}.json")
+        prev_values_dict = {
+            "FMCC": self.fmcc,
+            "DMC": self.dmc,
+            "DC": self.dc,
+            "Rainfall": self.rainfall,
+            "time": self.time
+        }
+        with open(file_path, "w") as f:
+            json.dump(prev_values_dict, f)
         
 #Updates values, needs to be saved
     def __FMCC(self):  

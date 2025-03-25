@@ -34,7 +34,7 @@ class Weather:
         if response.status_code == 200:
             weather_data = response.json()
             keys = ['wind_speed_10m', 'precipitation']
-            name = ['Wind Speed', 'Precipitation']
+            name = ['wind_speed', 'precipitation']
 
             weather_data_dict = {}
             for i in range(len(keys)):

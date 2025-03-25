@@ -138,12 +138,15 @@ const MapComponent = ({ numbers }) => {
               </p>
               <h3 className="module-title">Module 1:</h3>
               <div className="module-data">
-                <p>Temperature: {numbers?.["1"]?.temp || "N/A"}</p>
+                {/* if numbers.error_code == 0, working fine, -1, timeout, 1, error 1, else error 2 */}
+                <p>Status: {numbers?.["1"]?.error_code === 0 ? "Connected ✅" : numbers?.["1"]?.error_code === 1 ? "Disconnected ❌" : numbers?.["1"]?.error_code === -1 ? "No Data ❌" : "Error"}</p>
+                <p>Temperature: {numbers?.["1"]?.temperature || "N/A"}</p>
                 <p>Humidity: {numbers?.["1"]?.humidity || "N/A"}</p>
                 <p>Wind Speed: {numbers?.["1"]?.wind_speed || "N/A"}</p>
-                <p>FFMC: {numbers?.["1"]?.ffmc || "N/A"}</p>
-                <p>DMC: {numbers?.["1"]?.dmc || "N/A"}</p>
-                <p>DC: {numbers?.["1"]?.dc || "N/A"}</p>
+                <p>FWI: {numbers?.["1"]?.fwi || "N/A"}</p>
+                {/* <p>FFMC: {numbers?.["1"]?.fmcc || "N/A"}</p> */}
+                {/* <p>DMC: {numbers?.["1"]?.dmc || "N/A"}</p> */}
+                {/* <p>DC: {numbers?.["1"]?.dc || "N/A"}</p> */}
               </div>
             </div>
           </CustomOverlay>

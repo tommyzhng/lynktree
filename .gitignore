@@ -62,3 +62,6 @@ typings/
 
 #pycache files
 __pycache__/
+
+#previous data file (for local storage only)
+previous_data

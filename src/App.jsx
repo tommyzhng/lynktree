@@ -10,8 +10,6 @@ const App = () => {
   const [numbers, setNumbers] = useState(null);
   const location = "University of Toronto";
 
-  const ffmcNum = numbers?.["1"]?.ffmc || "N/A";
-
   return (
     <div className="app-container">
       <div className="header">
@@ -43,7 +41,7 @@ const App = () => {
             <AdminComponent
               isAdmin={isAdmin}
               setIsAdmin={setIsAdmin}
-              ffmcNum={ffmcNum}
+              numbers={numbers}
             />
           </div>
         )}
