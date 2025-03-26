@@ -1,4 +1,3 @@
-// src/App.jsx
 import React, { useState } from "react";
 import MapComponent from "./components/Maps/MapComponent";
 import AdminComponent from "./components/Admin/AdminComponent";
@@ -7,7 +6,8 @@ import "./App.css";
 
 const App = () => {
   const [isAdmin, setIsAdmin] = useState(false);
-  const [numbers, setNumbers] = useState(null);
+  const [numbers1, setNumbers1] = useState(null);
+  const [numbers2, setNumbers2] = useState(null);
   const location = "University of Toronto";
 
   return (
@@ -25,24 +25,19 @@ const App = () => {
 
       <div className="content">
         <div className={`map-section ${isAdmin ? "split" : "full"}`}>
-          <MapComponent numbers={numbers} isAdmin={isAdmin} />
+          <MapComponent numbers={numbers1} isAdmin={isAdmin} />
           {!isAdmin && (
-            <button
-              className="map-login-button"
-              onClick={() => setIsAdmin(true)}
-            >
+            <button className="map-login-button" onClick={() => setIsAdmin(true)}>
               Admin Log In
             </button>
           )}
-          <DataFetch setNumbers={setNumbers} />
+          
+          <DataFetch setNumbers1={setNumbers1} setNumbers2={setNumbers2} />
         </div>
+
         {isAdmin && (
           <div className="control-section">
-            <AdminComponent
-              isAdmin={isAdmin}
-              setIsAdmin={setIsAdmin}
-              numbers={numbers}
-            />
+            <AdminComponent isAdmin={isAdmin} setIsAdmin={setIsAdmin} numbers={numbers1} />
           </div>
         )}
       </div>

@@ -4,49 +4,60 @@ import time
 from datetime import datetime
 import json
 
-def get_fire_weather_index(sub, return_data, fwi, i):
-    if return_data[i]["status_error_code"] == 0:
-        weather_data = sub.curr_data[i]
-        vFWI = fwi.run(weather_data, i)
+from flask import Flask, jsonify
+from flask_cors import CORS
 
-        ret = {"fwi": vFWI, "fmcc": fwi.fmcc, "dmc": fwi.dmc, "dc": fwi.dc}
-        return_data[i].update(ret)
+app = Flask(__name__)
+CORS(app)
 
-if __name__ == "__main__":
-    sub = Subscriber()
-    fwi = FWI()
-    time.sleep(5)
+class Main:
+    def __init__(self):
+        self.sub = Subscriber()
+        self.fwi = FWI()
+        self.UPDATE_INTERVAL = 10
+        self.n = 0
+        self.data = {'1': {"status_error_code" : 1}, '2': {"status_error_code" : 1}}
 
-    UPDATE_INTERVAL = 30 #For FWI update (Seconds)
-    PRINT_INTERVAL = 1 #For printing data for GUI to read (Seconds)
+    def update_fire_weather_index(self):
+        for i in self.sub.curr_data.keys():
+            if self.data[i]["status_error_code"] == 0 and self.sub.curr_data[i]["error_code"] != 3:
+                weather_data = self.sub.curr_data[i]
+                vFWI = self.fwi.run(weather_data, i)
 
-    return_data = {'1': {"status_error_code" : 0}, '2': {"status_error_code" : 0}}
-    
-    n = 0
-    while True:
-        #sub.curr_data gets overwritten by its own class, return_data will be a copy but does not get overwritten so the fmcc and other values will be saved
-        for i in sub.curr_data.keys():
-            return_data[i].update(sub.curr_data[i])
-        if len(sub.curr_data) == 0:
-            return_data = {'1': {"status_error_code" : 1}, '2': {"status_error_code" : 1}}
-        else:
-            for i in sub.curr_data.keys():
-                if sub.curr_data[i]["error_code"] != 3:
-                    if n == 0:
-                        get_fire_weather_index(sub, return_data, fwi, i)
-                        n = UPDATE_INTERVAL
+                ret = {"fwi": vFWI, "fmcc": self.fwi.fmcc, "dmc": self.fwi.dmc, "dc": self.fwi.dc}
+                self.data[i].update(ret)
 
-                    today = datetime.today().strftime("%Y-%m-%d")
-                    full_datetime_str = f"{today} {sub.curr_data[i]['time']}"
-                    timestamp = time.mktime(time.strptime(full_datetime_str, "%Y-%m-%d %H:%M:%S"))
+    def update_values(self):
+        for i in self.sub.curr_data.keys():
+            self.data[i].update(self.sub.curr_data[i])
+            today = datetime.today().strftime("%Y-%m-%d")
+            full_datetime_str = f"{today} {self.sub.curr_data[i]['time']}"
+            timestamp = time.mktime(time.strptime(full_datetime_str, "%Y-%m-%d %H:%M:%S"))
 
-                    # Compare with the current time > 10 seconds
-                    if time.time() - timestamp > 10:
-                        return_data[i]["status_error_code"] = 2
-                    else:
-                        return_data[i]["status_error_code"] = 0
+            # Compare with the current time > 10 seconds
+            if time.time() - timestamp > 10:
+                self.data[i]["status_error_code"] = 2
+            else:
+                self.data[i]["status_error_code"] = 0
 
-        print(json.dumps(return_data), flush=True)
+# Create an instance of Main and store it in app config
+app.config['main'] = Main()
 
-        time.sleep(PRINT_INTERVAL)
-        n -= 1
+@app.route('/api/function_a', methods=['GET'])
+def run_fwi():
+    main_instance = app.config['main']
+    if len(main_instance.sub.curr_data) == 0:
+        main_instance.data = {'1': {"status_error_code" : 1}, '2': {"status_error_code" : 1}}
+    else:
+        main_instance.update_values()
+        if main_instance.n % main_instance.UPDATE_INTERVAL == 0:
+            main_instance.update_fire_weather_index()
+        main_instance.n += 1
+    return jsonify(main_instance.data)
+
+@app.route('/api/function_b', methods=['GET'])
+def run_2():
+    return jsonify({"message": "Function B response"})
+
+if __name__ == '__main__':
+    app.run(port=5000, debug=True)
