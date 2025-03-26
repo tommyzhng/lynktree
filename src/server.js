@@ -16,11 +16,11 @@ pythonProcess.on("close", (code) => {
 });
 
 // Serve static files for the React app
-app.use(express.static(path.join(__dirname, "build")));
+app.use(express.static(path.join(__dirname, "../python/build")));
 
 // This will handle all requests to your React app
 app.get("*", (req, res) => {
-  res.sendFile(path.join(__dirname, "build", "index.html"));
+  res.sendFile(path.join(__dirname, "../python/build", "index.html"));
 });
 
 // Start the Express server (you can use any port for the API server)
