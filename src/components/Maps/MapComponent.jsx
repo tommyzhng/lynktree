@@ -1,4 +1,3 @@
-// src/components/Maps/MapComponent.jsx
 import React, { useState, useEffect, useRef } from "react";
 import {
   MapContainer,
@@ -20,12 +19,9 @@ L.Icon.Default.mergeOptions({
   shadowUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
 });
 
-// red icon url
-//iconUrl: "https://static-00.iconduck.com/assets.00/map-marker-icon-171x256-xkl73sge.png",
-
-
 const landmarkPosition = [43.66079512969152, -79.39653684895607];
-
+const locations = {1: {lat: 43.66079512969152, long: -79.39653684895607}, 
+                   2: {lat: 43.66, long: -79.39}};
 
 const CustomOverlay = ({ position, isOpen, children }) => {
   const map = useMap();
@@ -35,7 +31,6 @@ const CustomOverlay = ({ position, isOpen, children }) => {
   useEffect(() => {
     if (!map || !isOpen) return;
 
-    // Create a real DOM container
     const container = L.DomUtil.create("div", "custom-popup-container");
     containerRef.current = container;
 
@@ -50,7 +45,6 @@ const CustomOverlay = ({ position, isOpen, children }) => {
       .setContent(container)
       .openOn(map);
 
-    // Delay rendering portal until Leaflet has inserted the container
     setTimeout(() => {
       setReady(true);
     }, 0);
@@ -67,11 +61,9 @@ const CustomOverlay = ({ position, isOpen, children }) => {
   return ReactDOM.createPortal(children, containerRef.current);
 };
 
-
-
-const MapComponent = ({ numbers }) => {
+const MapComponent = ({ numbers, isAdmin }) => {
   const centerPosition = [43.6622993431624, -79.39552899809453];
-  const [isCardOpen, setIsCardOpen] = useState(false);
+  const [activeMarker, setActiveMarker] = useState(null);
   const [isClicked, setIsClicked] = useState(false);
   const statusMessages = {
     0: "Connected ✅",
@@ -97,7 +89,7 @@ const MapComponent = ({ numbers }) => {
 
   const MapClickHandler = () => {
     useMapEvent("click", () => {
-      if (!isClicked) setIsCardOpen(false);
+      if (!isClicked) setActiveMarker(null);
     });
     return null;
   };
@@ -116,63 +108,69 @@ const MapComponent = ({ numbers }) => {
 
         <MapClickHandler />
 
-        <Marker
-          position={landmarkPosition}
-          eventHandlers={{
-            mouseover: () => {
-              if (!isClicked) setIsCardOpen(true);
-            },
-            mouseout: () => {
-              if (!isClicked) setIsCardOpen(false);
-            },
-            click: () => {
-              setIsClicked(!isClicked);
-              setIsCardOpen(!isClicked);
-            },
-          }}
-        />
+        {Object.keys(locations).map((key) => {
+          const position = [locations[key].lat, locations[key].long];
+          const moduleData = numbers?.[key] || {};
+          const fwi = moduleData.fwi || 0;
 
-        <Circle
-          center={landmarkPosition}
-          radius={100}
-          pathOptions={{
-            color: getColor(fwi),
-            fillColor: getColor(fwi),
-            fillOpacity: 0.3,
-            weight: 2,
-          }}
-        />
+          return (
+            <React.Fragment key={key}>
+              <Marker
+                position={position}
+                eventHandlers={{
+                  mouseover: () => {
+                    if (!isClicked) setActiveMarker(key);
+                  },
+                  mouseout: () => {
+                    if (!isClicked) setActiveMarker(null);
+                  },
+                  click: () => {
+                    setIsClicked(!isClicked);
+                    setActiveMarker(key);
+                  },
+                }}
+              />
 
-        {isCardOpen && (
-          <CustomOverlay position={landmarkPosition} isOpen={isCardOpen}>
-            <div className="landmark-card">
-              <p className="status">
-                Backend Status:{" "}
-                {numbers && Object.keys(numbers).length > 0 ? (
-                  <span className="text-green-600 font-semibold">Running ✅</span>
-                ) : (
-                  <span className="text-red-600 font-semibold">Not Running ❌</span>
-                )}
-              </p>
-              <h3 className="module-title">Module 1:</h3>
-              <div className="module-data">
-                
-                {(() => {const status = numbers?.["1"]?.status_error_code;
-                  return <p>Status: {statusMessages[status] || "Unknown Status ❓"}</p>;
-                })()}
-                
-                <p>Temperature: {numbers?.["1"]?.temperature || "N/A"}</p>
-                <p>Humidity: {numbers?.["1"]?.humidity || "N/A"}</p>
-                <p>Wind Speed: {numbers?.["1"]?.wind_speed || "N/A"}</p>
-                <p>FWI: {numbers?.["1"]?.fwi || "N/A"}</p>
-                <p>Last Update Time: {numbers?.["1"]?.time || "N/A"}</p>
-                {/* <p>FFMC: {numbers?.["1"]?.fmcc || "N/A"}</p> */}
-                {/* <p>DMC: {numbers?.["1"]?.dmc || "N/A"}</p> */}
-                {/* <p>DC: {numbers?.["1"]?.dc || "N/A"}</p> */}
-              </div>
-            </div>
-          </CustomOverlay>
-        )}
+              <Circle
+                center={position}
+                radius={100}
+                pathOptions={{
+                  color: getColor(fwi),
+                  fillColor: getColor(fwi),
+                  fillOpacity: 0.3,
+                  weight: 2,
+                }}
+              />
+
+              {activeMarker === key && (
+                <CustomOverlay position={position} isOpen={activeMarker === key}>
+                  <div className="landmark-card">
+                    <p className="status">
+                      Backend Status:{" "}
+                      {numbers && Object.keys(numbers).length > 0 ? (
+                        <span className="text-green-600 font-semibold">Running ✅</span>
+                      ) : (
+                        <span className="text-red-600 font-semibold">Not Running ❌</span>
+                      )}
+                    </p>
+                    <h3 className="module-title">Module {key}:</h3>
+                    <div className="module-data">
+                      {(() => {
+                        const status = moduleData.status_error_code;
+                        return <p>Status: {statusMessages[status] || "Unknown Status ❓"}</p>;
+                      })()}
+                      <p>Temperature: {moduleData.temperature || "N/A"}</p>
+                      <p>Humidity: {moduleData.humidity || "N/A"}</p>
+                      <p>Wind Speed: {moduleData.wind_speed || "N/A"}</p>
+                      <p>FWI: {moduleData.fwi || "N/A"}</p>
+                      <p>Last Update Time: {moduleData.time || "N/A"}</p>
+                    </div>
+                  </div>
+                </CustomOverlay>
+              )}
+            </React.Fragment>
+          );
+        })}
       </MapContainer>
     </div>
   );
