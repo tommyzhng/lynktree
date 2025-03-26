@@ -51,6 +51,16 @@ class Subscriber:
         # print(f"Updated {module_name}: {value}")
         return
 
+    def getLocation(self, num = 0):
+        if num == 0:
+            return self.locations
+        else:
+            return self.locations[num]
+    
+    def setLocation(self, num, lat, long):
+        self.locations[num] = {"lat": lat, "long": long}
+        return True
+
 # for testing
 if __name__ == "__main__":
     sub = Subscriber()
