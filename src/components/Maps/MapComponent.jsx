@@ -61,7 +61,7 @@ const CustomOverlay = ({ position, isOpen, children }) => {
   return ReactDOM.createPortal(children, containerRef.current);
 };
 
-const MapComponent = ({ numbers, isAdmin }) => {
+const MapComponent = ({ numbers }) => {
   const centerPosition = [43.6622993431624, -79.39552899809453];
   const [activeMarker, setActiveMarker] = useState(null);
   const [isClicked, setIsClicked] = useState(false);
@@ -125,8 +125,15 @@ const MapComponent = ({ numbers, isAdmin }) => {
                     if (!isClicked) setActiveMarker(null);
                   },
                   click: () => {
-                    setIsClicked(!isClicked);
-                    setActiveMarker(key);
+                    if (isClicked && activeMarker === key) {
+                      setActiveMarker(null);
+                      setIsClicked(false);
+                    } else if (isClicked && activeMarker !== key) {
+                      setActiveMarker(key);
+                    } else {
+                      setActiveMarker(key);
+                      setIsClicked(true);
+                    }
                   },
                 }}
               />
