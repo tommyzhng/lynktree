@@ -19,9 +19,10 @@ L.Icon.Default.mergeOptions({
   shadowUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
 });
 
-const landmarkPosition = [43.66079512969152, -79.39653684895607];
-const locations = {1: {lat: 43.66079512969152, long: -79.39653684895607}, 
-                   2: {lat: 43.66, long: -79.39}};
+// const landmarkPosition = [43.66079512969152, -79.39653684895607];
+// const locations = {1: {lat: 43.66079512969152, long: -79.39653684895607}, 
+//                    2: {lat: 43.66, long: -79.39}};
+
 
 const CustomOverlay = ({ position, isOpen, children }) => {
   const map = useMap();
@@ -61,8 +62,8 @@ const CustomOverlay = ({ position, isOpen, children }) => {
   return ReactDOM.createPortal(children, containerRef.current);
 };
 
-const MapComponent = ({ numbers }) => {
-  const centerPosition = [43.6622993431624, -79.39552899809453];
+const MapComponent = ({ numbers, locations, curr_pos}) => {
+  const centerPosition = curr_pos;
   const [activeMarker, setActiveMarker] = useState(null);
   const [isClicked, setIsClicked] = useState(false);
   const statusMessages = {
@@ -109,6 +110,8 @@ const MapComponent = ({ numbers }) => {
         <MapClickHandler />
 
         {Object.keys(locations).map((key) => {
+          if (key == 0) return null;
+
           const position = [locations[key].lat, locations[key].long];
           const moduleData = numbers?.[key] || {};
           const fwi = moduleData.fwi || 0;
@@ -125,11 +128,9 @@ const MapComponent = ({ numbers }) => {
                     if (!isClicked) setActiveMarker(null);
                   },
                   click: () => {
-                    if (isClicked && activeMarker === key) {
+                    if (activeMarker === key) {
                       setActiveMarker(null);
                       setIsClicked(false);
-                    } else if (isClicked && activeMarker !== key) {
-                      setActiveMarker(key);
                     } else {
                       setActiveMarker(key);
                       setIsClicked(true);

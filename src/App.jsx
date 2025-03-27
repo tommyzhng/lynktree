@@ -1,13 +1,15 @@
 import React, { useState } from "react";
 import MapComponent from "./components/Maps/MapComponent";
 import AdminComponent from "./components/Admin/AdminComponent";
-import DataFetch from "./components/Data/DataFetch";
+import DataFetch, {LocationFetch} from "./components/Data/DataFetch";
 import "./App.css";
 
 const App = () => {
   const [isAdmin, setIsAdmin] = useState(false);
-  const [numbers1, setNumbers1] = useState(null);
+  const [data, setData] = useState(null);
   const [numbers2, setNumbers2] = useState(null);
+  const [locations, setLocations] = useState({0: {lat: 0, long: 0}});
+  const [curr_pos, setCurr_pos] = useState([43.66070000706279, -79.39648789994064]);
   const location = "University of Toronto";
 
   return (
@@ -25,19 +27,19 @@ const App = () => {
 
       <div className="content">
         <div className={`map-section ${isAdmin ? "split" : "full"}`}>
-          <MapComponent numbers={numbers1} isAdmin={isAdmin} />
+          <DataFetch setData={setData}/>
+          <LocationFetch setLocations={setLocations} />
+          <MapComponent data={data} locations = {locations} curr_pos={curr_pos}/>
           {!isAdmin && (
             <button className="map-login-button" onClick={() => setIsAdmin(true)}>
               Admin Log In
             </button>
           )}
-          
-          <DataFetch setNumbers1={setNumbers1} setNumbers2={setNumbers2} />
         </div>
 
         {isAdmin && (
           <div className="control-section">
-            <AdminComponent isAdmin={isAdmin} setIsAdmin={setIsAdmin} numbers={numbers1} />
+            <AdminComponent isAdmin={isAdmin} setIsAdmin={setIsAdmin} data={data} />
           </div>
         )}
       </div>

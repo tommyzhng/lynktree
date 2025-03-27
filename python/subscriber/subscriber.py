@@ -7,11 +7,12 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 from weather_scraping import Weather
 import paho.mqtt.client as mqtt
 
+
 class Subscriber:
     def __init__(self):
-         # add more to these as you make more modules
-        self.locations = {"1":{"lat":43.67, "long": -79.39}, # Myhall
-                          "2":{"lat":48.38, "long": 89.25}} # Thunder bay
+        # Load locations from a JSON file
+        with open('python/subscriber/locations.json') as file:
+            self.locations = json.load(file)
         self.curr_data = {}
         self.weather = Weather()
 
@@ -57,8 +58,25 @@ class Subscriber:
         else:
             return self.locations[num]
     
-    def setLocation(self, num, lat, long):
+    def setNewLocation(self, lat, long):
+        self.locations[len(self.locations) + 1] = {"lat": lat, "long": long}
+        self.saveLocations_()
+        self.client.subscribe(self.AIO_username + self.topic + (len(self.locations)+1))
+        return True
+    
+    def updateLocation(self, num, lat, long):
         self.locations[num] = {"lat": lat, "long": long}
+        self.saveLocations_()
+        return True
+    
+    def removeLocation(self, num):
+        del self.locations[num]
+        self.saveLocations_()
+        return True
+    
+    def saveLocations_(self):
+        with open('python/subscriber/locations.json', 'w') as file:
+            json.dump(self.locations, file)
         return True
 
 # for testing
@@ -67,3 +85,4 @@ if __name__ == "__main__":
     while True:
         time.sleep(5) # sleep for 1 second
         print(sub.curr_data) # print the current data
+    

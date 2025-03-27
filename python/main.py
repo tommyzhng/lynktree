@@ -43,7 +43,7 @@ class Main:
 # Create an instance of Main and store it in app config
 app.config['main'] = Main()
 
-@app.route('/api/function_a', methods=['GET'])
+@app.route('/api/get_data', methods=['GET'])
 def run_fwi():
     main_instance = app.config['main']
     if len(main_instance.sub.curr_data) == 0:
@@ -55,9 +55,21 @@ def run_fwi():
         main_instance.n += 1
     return jsonify(main_instance.data)
 
-@app.route('/api/function_b', methods=['GET'])
-def run_2():
-    return jsonify({"message": "Function B response"})
+@app.route('/api/get_locations', methods=['GET'])
+def get_locations():
+    main_instance = app.config['main']
+    return jsonify(main_instance.sub.locations)
+
+@app.route('/api/add_location', methods=['POST'])
+def add_location(request):
+    main_instance = app.config['main']
+    data = request.get_json()
+    lat = data['lat']
+    long = data['long']
+    main_instance.sub.setNewLocation(lat, long)
+    return jsonify(main_instance.sub.locations)
+
+
 
 if __name__ == '__main__':
     app.run(port=5000, debug=True)

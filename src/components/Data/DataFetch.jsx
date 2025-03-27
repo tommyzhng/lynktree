@@ -1,32 +1,32 @@
 import React, { useEffect } from "react";
 
-const DataFetch = ({ setNumbers1, setNumbers2 }) => {
+const DataFetch = ({ setData }) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
         // Fetch result from function_a endpoint
-        const resA = await fetch("http://localhost:5000/api/function_a");
-        if (!resA.ok) {
-          throw new Error(`HTTP error! Status: ${resA.status}`);
+        const res = await fetch("http://localhost:5000/api/get_data");
+        if (!res.ok) {
+          throw new Error(`HTTP error! Status: ${res.status}`);
         }
-        const dataA = await resA.json();
-        console.log("Fetched dataA from API:", dataA);
+        const module_data = await res.json();
+        console.log("Fetched module_data from API:", module_data);
 
         // Fetch result from function_b endpoint
-        const resB = await fetch("http://localhost:5000/api/function_b");
-        if (!resB.ok) {
-          throw new Error(`HTTP error! Status: ${resB.status}`);
-        }
-        const dataB = await resB.json();
-        console.log("Fetched dataB from API:", dataB);
+        // const resB = await fetch("http://localhost:5000/api/get_locations");
+        // if (!resB.ok) {
+        //   throw new Error(`HTTP error! Status: ${resB.status}`);
+        // }
+        // const dataB = await resB.json();
+        // console.log("Fetched dataB from API:", dataB);
 
         // Set the separate state values
-        setNumbers1(dataA);  // ✅ Remove .result (Make sure API returns JSON correctly)
-        setNumbers2(dataB);
+        setData(module_data);  // ✅ Remove .result (Make sure API returns JSON correctly)
+        // setLocations(dataB);
       } catch (error) {
         console.error("Error fetching data:", error);
-        setNumbers1(null);
-        setNumbers2(null);
+        setData(null);
+        // setLocations(null);
       }
     };
 
@@ -34,9 +34,69 @@ const DataFetch = ({ setNumbers1, setNumbers2 }) => {
     const intervalId = setInterval(fetchData, 5000); // Polling every 5 seconds
 
     return () => clearInterval(intervalId); // Cleanup on unmount
-  }, [setNumbers1, setNumbers2]);
+  }, [setData]);
 
   return null;
 };
+
+const LocationFetch = ({ setLocations }) => {
+  useEffect(() => {
+    const fetchLocations = async () => {
+      try {
+        const res = await fetch("http://localhost:5000/api/get_locations");
+        if (!res.ok) {
+          throw new Error(`HTTP error! Status: ${res.status}`);
+        }
+        const data = await res.json();
+        console.log("Fetched data from API:", data);
+        setLocations(data);
+        clearInterval(intervalId); // Stop polling once the fetch succeeds
+      } catch (error) {
+        console.error("Error fetching data:", error);
+        setLocations({ 0: { lat: 0, long: 0 } });
+      }
+    };
+
+    fetchLocations(); // Initial fetch
+    const intervalId = setInterval(fetchLocations, 2000); // Polling every 2 seconds
+
+    return () => clearInterval(intervalId); // Cleanup on unmount
+  }, [setLocations]);
+
+  return null;
+};
+
+const LocationAdd = ({ setLocations, curr_pos }) => {
+  useEffect(() => {
+    const addLocation = async () => {
+      try {
+        const res = await fetch("http://localhost:5000/api/add_location", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            lat: curr_pos[0],
+            long: curr_pos[1],
+          }),
+        });
+        if (!res.ok) {
+          throw new Error(`HTTP error! Status: ${res.status}`);
+        }
+        const data = await res.json();
+        // console.log("Added location:", data);
+        setLocations(data);
+      } catch (error) {
+        console.error("Error adding location:", error);
+        // setLocations(null);
+      }
+    };
+    return () => {};
+  }, [setLocations, curr_pos]);
+
+  return null;
+}
+
+export {LocationFetch, LocationAdd};
 
 export default DataFetch;
