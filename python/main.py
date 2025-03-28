@@ -28,7 +28,6 @@ class Main:
                 self.data[i].update(ret)
 
     def update_values(self):
-        print("run ")
         for i in self.sub.curr_data.keys():
             self.data[i].update(self.sub.curr_data[i])
             today = datetime.today().strftime("%Y-%m-%d")
