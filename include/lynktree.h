@@ -25,7 +25,7 @@
 #define AIO_SERVER      "io.adafruit.com"
 #define AIO_SERVERPORT  1883                   // use 8883 for SSL
 #define AIO_USERNAME    "CzarHC"
-#define AIO_KEY         "aio_oCiM51HqaA1iuzSgx1DUMfX9MQsY"
+#define AIO_KEY         "aio_NZcc04fHEZVqsoHqzKvod3aVbeCK"
 
 // wifi
 // #define SSID "tommy"
