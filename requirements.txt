@@ -9,3 +9,5 @@ paho-mqtt
 requests
 folium
 PyQtWebEngine
+flask
+flask-cors

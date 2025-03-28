@@ -34,6 +34,7 @@ const DataFetch = ({ setData }) => {
     const intervalId = setInterval(fetchData, 5000); // Polling every 5 seconds
 
     return () => clearInterval(intervalId); // Cleanup on unmount
+    // return () => {}; // Cleanup on unmount
   }, [setData]);
 
   return null;
@@ -66,36 +67,30 @@ const LocationFetch = ({ setLocations }) => {
   return null;
 };
 
-const LocationAdd = ({ setLocations, curr_pos }) => {
-  useEffect(() => {
-    const addLocation = async () => {
-      try {
-        const res = await fetch("http://localhost:5000/api/add_location", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            lat: curr_pos[0],
-            long: curr_pos[1],
-          }),
-        });
-        if (!res.ok) {
-          throw new Error(`HTTP error! Status: ${res.status}`);
-        }
-        const data = await res.json();
-        // console.log("Added location:", data);
-        setLocations(data);
-      } catch (error) {
-        console.error("Error adding location:", error);
-        // setLocations(null);
-      }
-    };
-    return () => {};
-  }, [setLocations, curr_pos]);
+const LocationAdd = async ({ curr_pos, setLocations }) => {
+  try {
+    const res = await fetch("http://localhost:5000/api/add_location", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        lat: curr_pos[0],
+        long: curr_pos[1],
+      }),
+    });
 
-  return null;
-}
+    if (!res.ok) {
+      throw new Error(`HTTP error! Status: ${res.status}`);
+    }
+
+    const data = await res.json();
+    setLocations(data);
+    console.log("Location added successfully.");
+  } catch (error) {
+    console.error("Error adding location:", error);
+  }
+};
 
 export {LocationFetch, LocationAdd};
 

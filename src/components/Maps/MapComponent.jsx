@@ -11,6 +11,7 @@ import ReactDOM from "react-dom";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import "./MapComponent.css";
+import { memo } from "react";
 
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
@@ -24,43 +25,62 @@ L.Icon.Default.mergeOptions({
 //                    2: {lat: 43.66, long: -79.39}};
 
 
-const CustomOverlay = ({ position, isOpen, children }) => {
+// Memoized CustomOverlay to prevent unnecessary re-renders of the popup structure
+const CustomOverlay = memo(({ position, isOpen, children }) => {
   const map = useMap();
   const containerRef = useRef(null);
-  const [ready, setReady] = useState(false);
+  const popupRef = useRef(null);
 
   useEffect(() => {
-    if (!map || !isOpen) return;
+    if (!map) return;
 
-    const container = L.DomUtil.create("div", "custom-popup-container");
-    containerRef.current = container;
+    // Initialize the popup only once
+    if (!popupRef.current) {
+      const container = L.DomUtil.create("div", "custom-popup-container");
+      containerRef.current = container;
 
-    const popup = L.popup({
-      offset: [0, -40],
-      closeButton: false,
-      autoClose: false,
-      closeOnClick: false,
-      className: "leaflet-custom-popup",
-    })
-      .setLatLng(position)
-      .setContent(container)
-      .openOn(map);
+      const popup = L.popup({
+        offset: [0, -40],
+        closeButton: false,
+        autoClose: false,
+        closeOnClick: false,
+        className: "leaflet-custom-popup",
+      })
+        .setLatLng(position)
+        .setContent(container);
 
-    setTimeout(() => {
-      setReady(true);
-    }, 0);
+      popupRef.current = popup;
+    }
 
+    // Open or close the popup based on isOpen
+    if (isOpen) {
+      popupRef.current.setLatLng(position).openOn(map);
+    } else {
+      map.closePopup(popupRef.current);
+    }
+
+    // Cleanup on unmount
     return () => {
-      map.closePopup(popup);
+      if (popupRef.current) {
+        map.closePopup(popupRef.current);
+      }
       containerRef.current = null;
-      setReady(false);
+      popupRef.current = null;
     };
-  }, [map, isOpen, position]);
+  }, [map, isOpen, position]); // Only re-run if map, isOpen, or position changes
 
-  if (!ready || !containerRef.current) return null;
+  if (!containerRef.current) return null;
 
+  // Render children into the persistent container without re-creating the popup
   return ReactDOM.createPortal(children, containerRef.current);
-};
+}, (prevProps, nextProps) => {
+  // Only re-render if isOpen or position changes (not children)
+  return (
+    prevProps.isOpen === nextProps.isOpen &&
+    prevProps.position[0] === nextProps.position[0] &&
+    prevProps.position[1] === nextProps.position[1]
+  );
+});
 
 const MapComponent = ({ numbers, locations, curr_pos}) => {
   const centerPosition = curr_pos;
@@ -116,6 +136,8 @@ const MapComponent = ({ numbers, locations, curr_pos}) => {
           const moduleData = numbers?.[key] || {};
           const fwi = moduleData.fwi || 0;
 
+
+
           return (
             <React.Fragment key={key}>
               <Marker
@@ -128,9 +150,11 @@ const MapComponent = ({ numbers, locations, curr_pos}) => {
                     if (!isClicked) setActiveMarker(null);
                   },
                   click: () => {
-                    if (activeMarker === key) {
+                    if (isClicked && activeMarker === key) {
                       setActiveMarker(null);
                       setIsClicked(false);
+                    } else if (isClicked && activeMarker !== key) {
+                      setActiveMarker(key);
                     } else {
                       setActiveMarker(key);
                       setIsClicked(true);
@@ -138,6 +162,21 @@ const MapComponent = ({ numbers, locations, curr_pos}) => {
                   },
                 }}
               />
+
+              {/* Recenter the map on curr_pos change */}
+              {/* <RecenterMap curr_pos={curr_pos} />
+
+              <CircleMarker
+                center={curr_pos}
+                radius={8}
+                pathOptions={{
+                  color: "blue",
+                  fillColor: "blue",
+                  fillOpacity: 0.6,
+                }}
+              >
+                <Popup>You are here</Popup>
+              </CircleMarker> */}
 
               <Circle
                 center={position}
@@ -153,14 +192,6 @@ const MapComponent = ({ numbers, locations, curr_pos}) => {
               {activeMarker === key && (
                 <CustomOverlay position={position} isOpen={activeMarker === key}>
                   <div className="landmark-card">
-                    <p className="status">
-                      Backend Status:{" "}
-                      {numbers && Object.keys(numbers).length > 0 ? (
-                        <span className="text-green-600 font-semibold">Running ✅</span>
-                      ) : (
-                        <span className="text-red-600 font-semibold">Not Running ❌</span>
-                      )}
-                    </p>
                     <h3 className="module-title">Module {key}:</h3>
                     <div className="module-data">
                       {(() => {

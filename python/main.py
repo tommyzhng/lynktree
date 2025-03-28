@@ -4,7 +4,7 @@ import time
 from datetime import datetime
 import json
 
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
 from flask_cors import CORS
 
 app = Flask(__name__)
@@ -58,16 +58,17 @@ def run_fwi():
 @app.route('/api/get_locations', methods=['GET'])
 def get_locations():
     main_instance = app.config['main']
-    return jsonify(main_instance.sub.locations)
+    return jsonify({str(k): v for k, v in main_instance.sub.locations.items()})
 
 @app.route('/api/add_location', methods=['POST'])
-def add_location(request):
+def add_location():
     main_instance = app.config['main']
     data = request.get_json()
-    lat = data['lat']
-    long = data['long']
+    lat = data.get("lat")
+    long = data.get("long")
+    print(f"Received new location: {lat}, {long}")
     main_instance.sub.setNewLocation(lat, long)
-    return jsonify(main_instance.sub.locations)
+    return jsonify({str(k): v for k, v in main_instance.sub.locations.items()})
 
 
 

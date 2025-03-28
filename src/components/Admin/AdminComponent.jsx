@@ -1,13 +1,14 @@
 import React from "react";
 import "./AdminComponent.css";
+import { LocationAdd } from "../Data/DataFetch";
 
-const AdminComponent = ({ isAdmin, setIsAdmin, ffmcNum}) => {
+const AdminComponent = ({ isAdmin, setIsAdmin, ffmcNum, curr_pos, setLocations}) => {
     const handleLogin = () => {
         setIsAdmin(!isAdmin);
     };
 
-    const handleAddModule = () => {
-        console.log("Add Module clicked");
+    const handleAddModule = async () => {
+        await LocationAdd({ curr_pos, setLocations });
     }
 
     return (

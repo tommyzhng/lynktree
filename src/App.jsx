@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import MapComponent from "./components/Maps/MapComponent";
 import AdminComponent from "./components/Admin/AdminComponent";
 import DataFetch, {LocationFetch} from "./components/Data/DataFetch";
+import LocationService from "./components/Data/GetLocation";
 import "./App.css";
 
 const App = () => {
@@ -24,6 +25,7 @@ const App = () => {
           </>
         )}
       </div>
+      <LocationService setCurr_pos={setCurr_pos} />
 
       <div className="content">
         <div className={`map-section ${isAdmin ? "split" : "full"}`}>
@@ -39,7 +41,7 @@ const App = () => {
 
         {isAdmin && (
           <div className="control-section">
-            <AdminComponent isAdmin={isAdmin} setIsAdmin={setIsAdmin} data={data} />
+            <AdminComponent isAdmin={isAdmin} setIsAdmin={setIsAdmin} data={data} setLocations={setLocations} curr_pos={curr_pos} />
           </div>
         )}
       </div>

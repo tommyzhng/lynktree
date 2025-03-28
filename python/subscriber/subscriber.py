@@ -61,7 +61,7 @@ class Subscriber:
     def setNewLocation(self, lat, long):
         self.locations[len(self.locations) + 1] = {"lat": lat, "long": long}
         self.saveLocations_()
-        self.client.subscribe(self.AIO_username + self.topic + (len(self.locations)+1))
+        self.client.subscribe(self.AIO_username + self.topic + str(len(self.locations)+1))
         return True
     
     def updateLocation(self, num, lat, long):
