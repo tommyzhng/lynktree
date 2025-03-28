@@ -27,21 +27,28 @@ class Weather:
 
     # Private function for API call
     def __fetch_weather(self, latitude, longitude):
-        url = f"https://api.open-meteo.com/v1/forecast?latitude={latitude}&longitude={longitude}&current=temperature_2m,relative_humidity_2m,wind_speed_10m,precipitation"
+        fail = {"wind_speed": None, "precipitation": None}
+        try:
+            url = f"https://api.open-meteo.com/v1/forecast?latitude={latitude}&longitude={longitude}&current=temperature_2m,relative_humidity_2m,wind_speed_10m,precipitation"
 
-        response = requests.get(url)
+            response = requests.get(url)
+            if response.status_code == 200:
+                weather_data = response.json()
+                keys = ['wind_speed_10m', 'precipitation']
+                name = ['wind_speed', 'precipitation']
+
+                weather_data_dict = {}
+                for i in range(len(keys)):
+                    weather_data_dict[name[i]] = weather_data['current'][keys[i]]
+                return weather_data_dict
+            else:
+                return fail
+        except:
+            return fail
+
+            
         
-        if response.status_code == 200:
-            weather_data = response.json()
-            keys = ['wind_speed_10m', 'precipitation']
-            name = ['wind_speed', 'precipitation']
-
-            weather_data_dict = {}
-            for i in range(len(keys)):
-                weather_data_dict[name[i]] = weather_data['current'][keys[i]]
-            return weather_data_dict
-        else:
-            return None
+        
 
 # if __name__ == "__main__":
 #     weather = Weather()

@@ -7,9 +7,12 @@ import time
 
 #Need the temp + humidity from Hari + Tommy
 from subscriber.subscriber import Subscriber
+from weather_scraping import Weather
 
 class FWI:
     def __init__(self):
+        self.weather = Weather()
+
         #Previous variable - call on previous_data file
         #Get current month
         self.month = time.strftime("%B") #Get current month
@@ -40,11 +43,13 @@ class FWI:
     def __update(self, weather_data, id):
         #Update the current rainfall, humidity etc.. values
         #https://www.rdocumentation.org/packages/cffdrs/versions/1.8.20/topics/fwi for default values
-        
+        scraping = self.weather.get_weather(weather_data['latitude'], weather_data['longitude'])
+
         self.temperature = weather_data['temperature']
         self.humidity = weather_data['humidity']
-        self.rainfall = weather_data['precipitation']
-        self.wind_speed = weather_data['wind_speed']
+        if scraping['wind_speed'] != None:
+            self.rainfall = scraping['precipitation']
+            self.wind_speed = scraping['wind_speed']
         self.time = weather_data['time']
 
         #If file does not exist, use default values given by standards
