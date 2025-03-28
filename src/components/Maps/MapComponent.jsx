@@ -152,6 +152,20 @@ const MapComponent = ({ locations, curr_pos, numbers }) => {
 
         <MapClickHandler />
 
+        // a marker for your location and put aput a tiny cirlce around it. You a red dot icon for the marker
+        <Marker position={centerPosition} icon={L.icon({ iconUrl: "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png", shadowUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png", iconSize: [25, 41], iconAnchor: [12, 41] })}>
+          <Circle
+            center={centerPosition}
+            radius={20}
+            pathOptions={{
+              color: "red",
+              fillColor: "red",
+              fillOpacity: 0.3,
+              weight: 2,
+            }}
+          />  
+        </Marker>
+
         {Object.keys(locations).map((key) => {
           if (key == 0) return null;
 
