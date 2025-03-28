@@ -25,7 +25,24 @@
 #define AIO_SERVER      "io.adafruit.com"
 #define AIO_SERVERPORT  1883                   // use 8883 for SSL
 #define AIO_USERNAME    "CzarHC"
-#define AIO_KEY         "aio_NZcc04fHEZVqsoHqzKvod3aVbeCK"
+
+// Read AIO_KEY from a file
+#include <fstream>
+#include <string>
+
+std::string readAIOKey() {
+    std::ifstream keyFile("include/aio_key.txt");
+    std::string key;
+    if (keyFile.is_open()) {
+        std::getline(keyFile, key);
+        keyFile.close();
+    }
+    return key;
+}
+
+const std::string KEY = readAIOKey();
+
+#define AIO_KEY         KEY.c_str()
 
 // wifi
 // #define SSID "tommy"
