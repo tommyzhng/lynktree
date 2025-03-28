@@ -8,7 +8,6 @@ import "./App.css";
 const App = () => {
   const [isAdmin, setIsAdmin] = useState(false);
   const [data, setData] = useState(null);
-  const [numbers2, setNumbers2] = useState(null);
   const [locations, setLocations] = useState({0: {lat: 0, long: 0}});
   const [curr_pos, setCurr_pos] = useState([43.66070000706279, -79.39648789994064]);
   const location = "University of Toronto";
@@ -31,7 +30,7 @@ const App = () => {
         <div className={`map-section ${isAdmin ? "split" : "full"}`}>
           <DataFetch setData={setData}/>
           <LocationFetch setLocations={setLocations} />
-          <MapComponent numbers={data} locations = {locations} curr_pos={curr_pos}/>
+          <MapComponent numbers={data} locations = {locations} curr_pos={curr_pos} isAdmin={isAdmin}/>
           {!isAdmin && (
             <button className="map-login-button" onClick={() => setIsAdmin(true)}>
               Admin Log In

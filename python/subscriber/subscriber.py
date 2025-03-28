@@ -43,7 +43,6 @@ class Subscriber:
         # if the API call fails, return None - uncomment this if you want to see the error message - Alex
         # if weather_data == None:
         #     print("API call failed")
-
         
         self.curr_data[module_name] = weather_data
         value = json.loads(msg.payload.decode())  # Decode message

@@ -12,14 +12,6 @@ const DataFetch = ({ setData }) => {
         const module_data = await res.json();
         console.log("Fetched module_data from API:", module_data);
 
-        // Fetch result from function_b endpoint
-        // const resB = await fetch("http://localhost:5000/api/get_locations");
-        // if (!resB.ok) {
-        //   throw new Error(`HTTP error! Status: ${resB.status}`);
-        // }
-        // const dataB = await resB.json();
-        // console.log("Fetched dataB from API:", dataB);
-
         // Set the separate state values
         setData(module_data);  // ✅ Remove .result (Make sure API returns JSON correctly)
         // setLocations(dataB);

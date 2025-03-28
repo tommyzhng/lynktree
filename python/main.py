@@ -47,7 +47,7 @@ app.config['main'] = Main()
 def run_fwi():
     main_instance = app.config['main']
     if len(main_instance.sub.curr_data) == 0:
-        main_instance.data = {'1': {"status_error_code" : 1}, '2': {"status_error_code" : 1}}
+        main_instance.data = {str(i+1): {"status_error_code": 1} for i in range(len(main_instance.sub.locations))}
     else:
         main_instance.update_values()
         if main_instance.n % main_instance.UPDATE_INTERVAL == 0:

@@ -20,34 +20,66 @@ L.Icon.Default.mergeOptions({
 });
 
 // Subcomponent for the card content
-const ModuleCard = ({ key, moduleData }) => {
+const ModuleCard = ({ moduleKey, moduleData, isAdmin }) => {
   const statusMessages = {
     0: "Connected ✅",
     1: "No Data ❌",
     2: "Disconnected ❌",
   };
 
-  return (
-    <div className="landmark-card">
-      <h3 className="module-title">Module {key}:</h3>
+  const errorCode = {
+    0: "No Error ✅",
+    1: "Wifi Error ❌",
+    2: "Server Error ❌",
+    3: "BME Sensor malfunction ❌",
+    4: "Movement Detected ❌",
+    5: "Low Battery ❌",
+  };
+
+  return isAdmin ? (
+    <div className="landmark-card admin-view">
+      <h3 className="module-title">Module {moduleKey}:</h3>
       <div className="module-data">
         {(() => {
           const status = moduleData.status_error_code;
           return (
-            <p>Status: {statusMessages[status] || "Unknown Status ❓"}</p>
+            <p>Status: {statusMessages[status] || "Server Down ❌"}</p>
           );
         })()}
-        <p>Temperature: {moduleData.temperature || "N/A"}</p>
-        <p>Humidity: {moduleData.humidity || "N/A"}</p>
-        <p>Wind Speed: {moduleData.wind_speed || "N/A"}</p>
-        <p>FWI: {moduleData.fwi || "N/A"}</p>
+        {(() => {
+          const error = moduleData.error_code;
+          return (
+            <p>Error: {errorCode[error] || "N/A"}</p>
+          );
+        })()}
+        <p>Battery Percent: {moduleData.battery_percent?.toFixed(2) || "N/A"}</p>
+        <p>Last Update Time: {moduleData.time || "N/A"}</p>
+      </div>
+    </div>
+  ) : (
+    <div className="landmark-card">
+      <h3 className="module-title">Module {moduleKey}:</h3>
+      <div className="module-data">
+        {(() => {
+          const status = moduleData.status_error_code;
+          return (
+            <p>Status: {statusMessages[status] || "Server Down ❌"}</p>
+          );
+        })()}
+        <p>Temperature: {moduleData.temperature?.toFixed(2) || "N/A"}</p>
+        <p>Humidity: {moduleData.humidity?.toFixed(2) || "N/A"}</p>
+        <p>Wind Speed: {moduleData.wind_speed?.toFixed(2) || "N/A"}</p>
+        <p>FWI: {moduleData.fwi?.toFixed(2) || "N/A"}</p>
+        <p>FFMC: {moduleData.fmcc?.toFixed(2) || "N/A"}</p>
+        <p>DC: {moduleData.dc?.toFixed(2) || "N/A"}</p>
+        <p>DMC: {moduleData.dmc?.toFixed(2) || "N/A"}</p>
         <p>Last Update Time: {moduleData.time || "N/A"}</p>
       </div>
     </div>
   );
 };
 
-const CustomOverlay = ({ position, isOpen, moduleKey, numbers }) => {
+const CustomOverlay = ({ position, isOpen, moduleKey, numbers, isAdmin }) => {
   const map = useMap();
   const containerRef = useRef(null);
   const popupRef = useRef(null);
@@ -81,21 +113,19 @@ const CustomOverlay = ({ position, isOpen, moduleKey, numbers }) => {
     }
 
     // Cleanup on unmount only
-    return () => {
-      
-    };
+    return () => {};
   }, [map, isOpen, position]); // Dependencies ensure instant response to isOpen
 
   if (!containerRef.current) return null;
 
   const moduleData = numbers?.[moduleKey] || {};
   return ReactDOM.createPortal(
-    <ModuleCard key={moduleKey} moduleData={moduleData} />,
+    <ModuleCard moduleKey={moduleKey} moduleData={moduleData} isAdmin={isAdmin} />,
     containerRef.current
   );
 };
 
-const MapComponent = ({ locations, curr_pos, numbers }) => {
+const MapComponent = ({ locations, curr_pos, numbers, isAdmin}) => {
   const centerPosition = curr_pos;
   const [activeMarker, setActiveMarker] = useState(null);
   const [isClicked, setIsClicked] = useState(false);
@@ -152,14 +182,13 @@ const MapComponent = ({ locations, curr_pos, numbers }) => {
 
         <MapClickHandler />
 
-        // a marker for your location and put aput a tiny cirlce around it. You a red dot icon for the marker
         <Marker position={centerPosition} icon={L.icon({ iconUrl: "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png", shadowUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png", iconSize: [25, 41], iconAnchor: [12, 41] })}>
           <Circle
             center={centerPosition}
             radius={20}
             pathOptions={{
-              color: "red",
-              fillColor: "red",
+              color: "blue",
+              fillColor: "blue",
               fillOpacity: 0.3,
               weight: 2,
             }}
@@ -167,7 +196,7 @@ const MapComponent = ({ locations, curr_pos, numbers }) => {
         </Marker>
 
         {Object.keys(locations).map((key) => {
-          if (key == 0) return null;
+          if (key === 0) return null;
 
           const position = [locations[key].lat, locations[key].long];
           const moduleData = numbers?.[key] || {};
@@ -188,18 +217,18 @@ const MapComponent = ({ locations, curr_pos, numbers }) => {
                 center={position}
                 radius={100}
                 pathOptions={{
-                  color: getColor(fwi),
-                  fillColor: getColor(fwi),
+                  color: moduleData.status_error_code === 0 ? getColor(fwi) : "black",
+                  fillColor: moduleData.status_error_code === 0 ? getColor(fwi) : "black",
                   fillOpacity: 0.3,
                   weight: 2,
                 }}
               />
-
               <CustomOverlay
                 position={position}
                 isOpen={activeMarker === key}
                 moduleKey={key}
                 numbers={numbers}
+                isAdmin={isAdmin}
               />
             </React.Fragment>
           );
