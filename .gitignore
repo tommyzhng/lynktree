@@ -3,6 +3,9 @@
 .venv
 /venv
 
+# ignore api_key.txt
+python/subscriber/api_key.txt
+
 # dependencies
 /node_modules
 /.pnp

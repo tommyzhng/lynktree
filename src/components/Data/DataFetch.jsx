@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 const LOCAL_BASE_URL = "http://localhost:5000";
 const ONLINE_BASE_URL = "https://aedc2cac-a2b4-46fa-a7f6-7bd6d32bd93a-00-51sp61fquhex.worf.repl.co:5000";
-const BASE_URL = LOCAL_BASE_URL; // Change this to LOCAL_BASE_URL for local testing
+const BASE_URL = ONLINE_BASE_URL; // Change this to LOCAL_BASE_URL for local testing
 const API_ENDPOINTS = {
   GET_DATA: "/api/get_data",
   GET_LOCATIONS: "/api/get_locations",

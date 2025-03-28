@@ -23,8 +23,10 @@ class Subscriber:
         self.AIO_server = "io.adafruit.com"
         self.AIO_serverport = 1883
         self.AIO_username = "CzarHC"
-        self.AIO_key = "aio_NZcc04fHEZVqsoHqzKvod3aVbeCK"
         self.topic = "/feeds/lynktree.comms"
+
+        with open('python/subscriber/api_key.txt') as file:
+           self.AIO_key = file.read().strip() # read the api key from the file
 
         self.__connect() #connect to the mqtt broker
 
