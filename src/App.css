@@ -77,15 +77,16 @@
 
 .map-login-button {
   position: absolute;
-  top: 1rem;
-  right: 1rem;
+  top: 4.5rem;
+  right: 1.5rem;
   background-color: #3b82f6;
   color: white;
-  padding: 0.5rem 1rem;
-  border-radius: 0.25rem;
+  padding: 0.75rem 1.5rem;
+  border-radius: 1rem;
   border: none;
   cursor: pointer;
   z-index: 1000;
+  font-size: 1rem; 
 }
 
 .map-login-button:hover {
@@ -94,15 +95,16 @@
 
 .map-info-button {
   position: absolute;
-  top: 3rem;
-  right: 2.5rem;
+  top: 1.5rem;
+  right: 1.5rem;
   background-color: #3b82f6;
   color: white;
-  padding: 0.5rem 1rem;
-  border-radius: 0.25rem;
+  padding: 0.75rem 1.5rem; 
+  border-radius: 1rem;
   border: none;
   cursor: pointer;
   z-index: 1000;
+  font-size: 1rem; 
 }
 
 .map-info-button:hover {

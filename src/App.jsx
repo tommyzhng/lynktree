@@ -3,6 +3,7 @@ import MapComponent from "./components/Maps/MapComponent";
 import AdminComponent from "./components/Admin/AdminComponent";
 import DataFetch, {LocationFetch} from "./components/Data/DataFetch";
 import LocationService from "./components/Data/GetLocation";
+import InfoComponent from "./components/Info/InfoComponent";
 import "./App.css";
 
 const App = () => {
@@ -39,17 +40,11 @@ const App = () => {
           )}
           {!info &&(
             <button className="map-info-button" onClick={() => setInfo(true)}>
-              Info
+              How To Use Lynktree
             </button>
           )}
-          {info && (
-            <div className="info">
-              <button className="map-info-button" onClick={() => setInfo(false)}>
-                Close
-              </button>
-            </div>
-          )
-          }
+          {info && <InfoComponent info={info} setInfo={setInfo} />}
+          
         </div>
 
         {isAdmin && (

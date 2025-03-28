@@ -44,7 +44,6 @@
 .leaflet-custom-popup .leaflet-popup-content-wrapper {
   max-width: 360px !important; /* or even 400px */
   width: max-content !important;
-  transform: translateX(-50%);
   position: relative;
 }
 
