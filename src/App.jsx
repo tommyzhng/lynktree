@@ -31,7 +31,7 @@ const App = () => {
         <div className={`map-section ${isAdmin ? "split" : "full"}`}>
           <DataFetch setData={setData}/>
           <LocationFetch setLocations={setLocations} />
-          <MapComponent data={data} locations = {locations} curr_pos={curr_pos}/>
+          <MapComponent numbers={data} locations = {locations} curr_pos={curr_pos}/>
           {!isAdmin && (
             <button className="map-login-button" onClick={() => setIsAdmin(true)}>
               Admin Log In
