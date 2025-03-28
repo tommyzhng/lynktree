@@ -60,7 +60,7 @@ const LocationFetch = ({ setLocations }) => {
     };
 
     fetchLocations(); // Initial fetch
-    const intervalId = setInterval(fetchLocations, 2000); // Polling every 2 seconds
+    const intervalId = setInterval(fetchLocations, 5000); // Polling every 2 seconds
 
     return () => clearInterval(intervalId); // Cleanup on unmount
   }, [setLocations]);

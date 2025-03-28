@@ -36,6 +36,10 @@ const ModuleCard = ({ moduleKey, moduleData, isAdmin }) => {
     5: "Low Battery ❌",
   };
 
+  if (moduleData.status_error_code === 2) {
+    moduleData.error_code = 1;
+  }
+
   return isAdmin ? (
     <div className="landmark-card admin-view">
       <h3 className="module-title">Module {moduleKey}:</h3>
