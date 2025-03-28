@@ -23,7 +23,7 @@ class Subscriber:
         self.AIO_server = "io.adafruit.com"
         self.AIO_serverport = 1883
         self.AIO_username = "CzarHC"
-        self.AIO_key = "aio_oCiM51HqaA1iuzSgx1DUMfX9MQsY"
+        self.AIO_key = "aio_NZcc04fHEZVqsoHqzKvod3aVbeCK"
         self.topic = "/feeds/lynktree.comms"
 
         self.__connect() #connect to the mqtt broker
@@ -48,7 +48,8 @@ class Subscriber:
         value = json.loads(msg.payload.decode())  # Decode message
         self.curr_data[module_name].update(value)  # Update data dictionary
         self.curr_data[module_name]["time"] = time.strftime("%H:%M:%S")  # format in HH:MM:SS
-        # print(f"Updated {module_name}: {value}")
+        print(f"Updated {module_name}: {value}")
+        #print(time.time())
         return
 
     def getLocation(self, num = 0):
@@ -58,9 +59,9 @@ class Subscriber:
             return self.locations[num]
     
     def setNewLocation(self, lat, long):
-        self.locations[len(self.locations) + 1] = {"lat": lat, "long": long}
+        self.locations[str(len(self.locations) + 1)] = {"lat": lat, "long": long}
         self.saveLocations_()
-        self.client.subscribe(self.AIO_username + self.topic + str(len(self.locations)+1))
+        self.client.subscribe(self.AIO_username + self.topic + str(len(self.locations))) # subscribe to the new location
         return True
     
     def updateLocation(self, num, lat, long):

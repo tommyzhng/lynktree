@@ -25,26 +25,7 @@ const AdminComponent = ({ isAdmin, setIsAdmin, data, curr_pos, setLocations}) =>
             {isAdmin && (
                 <div className="admin-details">
                     <div className="statistics-page">
-                        <h2>Statistics</h2>
-                        <div className="stats">
-                            <div className="stat-item">
-                                <span>Total Users:</span> <span>420</span>
-                            </div>
-                            <div className="stat-item">
-                                <span>Active Sessions:</span> <span>45</span>
-                            </div>
-                            <div className="stat-item">
-                                <span>Module Usage:</span> <span>69%</span>
-                            </div>
-                        </div>
-                        <div className="Module Info:">
-                            <h2>Module Errors:</h2>
-                            <div className="module-errors">
-                                <span>
-                                    
-                                </span>
-                            </div>
-                        </div>
+                        <h2>More features coming soon!!</h2>
                     </div>
                 </div>
             )}

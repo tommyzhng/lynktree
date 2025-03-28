@@ -16,7 +16,7 @@ class Main:
         self.fwi = FWI()
         self.UPDATE_INTERVAL = 10
         self.n = 0
-        self.data = {'1': {"status_error_code" : 1}, '2': {"status_error_code" : 1}}
+        self.data = {"1": {"status_error_code" : 1}, "2": {"status_error_code" : 1}}
 
     def update_fire_weather_index(self):
         for i in self.sub.curr_data.keys():
@@ -28,14 +28,15 @@ class Main:
                 self.data[i].update(ret)
 
     def update_values(self):
+        print("run ")
         for i in self.sub.curr_data.keys():
             self.data[i].update(self.sub.curr_data[i])
             today = datetime.today().strftime("%Y-%m-%d")
             full_datetime_str = f"{today} {self.sub.curr_data[i]['time']}"
             timestamp = time.mktime(time.strptime(full_datetime_str, "%Y-%m-%d %H:%M:%S"))
-
+            
             # Compare with the current time > 10 seconds
-            if time.time() - timestamp > 10:
+            if time.time() - timestamp > 30:
                 self.data[i]["status_error_code"] = 2
             else:
                 self.data[i]["status_error_code"] = 0
@@ -46,6 +47,7 @@ app.config['main'] = Main()
 @app.route('/api/get_data', methods=['GET'])
 def run_fwi():
     main_instance = app.config['main']
+    print(len(main_instance.sub.curr_data))
     if len(main_instance.sub.curr_data) == 0:
         main_instance.data = {str(i+1): {"status_error_code": 1} for i in range(len(main_instance.sub.locations))}
     else:
@@ -68,6 +70,7 @@ def add_location():
     long = data.get("long")
     print(f"Received new location: {lat}, {long}")
     main_instance.sub.setNewLocation(lat, long)
+    main_instance.data[str(len(main_instance.sub.locations))] = {"status_error_code": 1}
     return jsonify({str(k): v for k, v in main_instance.sub.locations.items()})
 
 
