@@ -11,6 +11,7 @@ const App = () => {
   const [locations, setLocations] = useState({0: {lat: 0, long: 0}});
   const [curr_pos, setCurr_pos] = useState([43.66070000706279, -79.39648789994064]);
   const location = "University of Toronto";
+  const [info, setInfo] = useState(false);
 
   return (
     <div className="app-container">
@@ -36,6 +37,19 @@ const App = () => {
               Admin Log In
             </button>
           )}
+          {!info &&(
+            <button className="map-info-button" onClick={() => setInfo(true)}>
+              Info
+            </button>
+          )}
+          {info && (
+            <div className="info">
+              <button className="map-info-button" onClick={() => setInfo(false)}>
+                Close
+              </button>
+            </div>
+          )
+          }
         </div>
 
         {isAdmin && (

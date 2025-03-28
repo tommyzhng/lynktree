@@ -92,6 +92,23 @@
   background-color: #2563eb;
 }
 
+.map-info-button {
+  position: absolute;
+  top: 3rem;
+  right: 2.5rem;
+  background-color: #3b82f6;
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 0.25rem;
+  border: none;
+  cursor: pointer;
+  z-index: 1000;
+}
+
+.map-info-button:hover {
+  background-color: #2563eb;
+}
+
 
 /* Mobile adjustments */
 @media (max-width: 768px) {
