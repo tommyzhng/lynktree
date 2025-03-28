@@ -43,7 +43,7 @@ class FWI:
     def __update(self, weather_data, id):
         #Update the current rainfall, humidity etc.. values
         #https://www.rdocumentation.org/packages/cffdrs/versions/1.8.20/topics/fwi for default values
-        scraping = self.weather.get_weather(weather_data['latitude'], weather_data['longitude'])
+        scraping = self.weather.get_weather(weather_data['lat'], weather_data['long'])
 
         self.temperature = weather_data['temperature']
         self.humidity = weather_data['humidity']

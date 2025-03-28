@@ -13,7 +13,7 @@ class Subscriber:
         # Load locations from a JSON file
         with open('python/subscriber/locations.json') as file:
             self.locations = json.load(file)
-        self.curr_data = self.locations.copy() # create a copy of the locations dictionary to store the current data
+        self.curr_data = {} # create a copy of the locations dictionary to store the current data
         self.weather = Weather()
 
         # setting up the mqtt client

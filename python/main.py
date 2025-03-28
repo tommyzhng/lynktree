@@ -24,7 +24,7 @@ class Main:
                 weather_data = self.sub.curr_data[i]
                 vFWI = self.fwi.run(weather_data, i)
 
-                ret = {"fwi": vFWI, "fmcc": self.fwi.fmcc, "dmc": self.fwi.dmc, "dc": self.fwi.dc, "precipitation": self.fwi.precipitation, "wind_speed": self.fwi.wind_speed}
+                ret = {"fwi": vFWI, "fmcc": self.fwi.fmcc, "dmc": self.fwi.dmc, "dc": self.fwi.dc, "precipitation": self.fwi.rainfall, "wind_speed": self.fwi.wind_speed}
                 self.data[i].update(ret)
 
     def update_values(self):
