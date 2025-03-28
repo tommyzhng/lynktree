@@ -1,15 +1,15 @@
 {
   "files": {
-    "main.css": "/lynktree/static/css/main.21a4dd85.css",
-    "main.js": "/lynktree/static/js/main.7f7a065b.js",
+    "main.css": "/lynktree/static/css/main.033b29fb.css",
+    "main.js": "/lynktree/static/js/main.3934abd3.js",
     "static/js/453.e31f5092.chunk.js": "/lynktree/static/js/453.e31f5092.chunk.js",
     "index.html": "/lynktree/index.html",
-    "main.21a4dd85.css.map": "/lynktree/static/css/main.21a4dd85.css.map",
-    "main.7f7a065b.js.map": "/lynktree/static/js/main.7f7a065b.js.map",
+    "main.033b29fb.css.map": "/lynktree/static/css/main.033b29fb.css.map",
+    "main.3934abd3.js.map": "/lynktree/static/js/main.3934abd3.js.map",
     "453.e31f5092.chunk.js.map": "/lynktree/static/js/453.e31f5092.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.21a4dd85.css",
-    "static/js/main.7f7a065b.js"
+    "static/css/main.033b29fb.css",
+    "static/js/main.3934abd3.js"
   ]
 }
