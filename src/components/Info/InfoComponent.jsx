@@ -28,10 +28,10 @@ const InfoComponent = ({ setInfo }) => {
                     </p>
                     <ul>
                         <li><strong>FFMC</strong>: Surface dryness – affects ease of ignition.</li>
-                        <li><strong>DMC/DC</strong>: Subsurface dryness – affects burn depth and smoldering.</li>
-                        <li><strong>ISI</strong>: Expected fire spread rate (wind + dryness).</li>
-                        <li><strong>BUI</strong>: Fuel buildup – how much is available to burn.</li>
+                        <li><strong>DMC</strong>: Subsurface dryness – affects burn depth and smoldering.</li>
+                        <li><strong>DC</strong>: Drought Code - rating of average moisture content in deep organic layers.</li>
                         <li><strong>FWI</strong>: Combines spread and fuel to indicate fire intensity.</li>
+                        <li><strong>DSR: Daily Serverity Rating - DIfficulty of controlling fires</strong></li>
                     </ul>
 
                     <h3>Disclaimer:</h3>

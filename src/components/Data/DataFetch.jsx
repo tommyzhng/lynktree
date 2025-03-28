@@ -29,6 +29,7 @@ const DataFetch = ({ setData }) => {
         // setLocations(null);
       }
     };
+    
 
     fetchData(); // Initial fetch
     const intervalId = setInterval(fetchData, 5000); // Polling every 5 seconds
@@ -49,12 +50,12 @@ const LocationFetch = ({ setLocations }) => {
           throw new Error(`HTTP error! Status: ${res.status}`);
         }
         const data = await res.json();
-        console.log("Fetched data from API:", data);
+        console.log("Fetched loction data from API:", data);
         setLocations(data);
-        clearInterval(intervalId); // Stop polling once the fetch succeeds
+        //clearInterval(intervalId); // Stop polling once the fetch succeeds
       } catch (error) {
         console.error("Error fetching data:", error);
-        setLocations({ 0: { lat: 0, long: 0 } });
+        //setLocations({ 0: { lat: 0, long: 0 } });
       }
     };
 
