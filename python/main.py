@@ -16,7 +16,7 @@ class Main:
         self.fwi = FWI()
         self.UPDATE_INTERVAL = 10
         self.n = 0
-        self.data = {'1': {"status_error_code" : 1}, '2': {"status_error_code" : 1}}
+        self.data = {'1': {"status_error_code" : 1}, '2': {"status_error_code" : 1}, '3': {"status_error_code" : 1}}
 
     def update_fire_weather_index(self):
         for i in self.sub.curr_data.keys():

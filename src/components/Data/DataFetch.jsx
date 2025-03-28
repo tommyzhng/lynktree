@@ -1,11 +1,19 @@
 import React, { useEffect } from "react";
+const LOCAL_BASE_URL = "http://localhost:5000";
+const ONLINE_BASE_URL = "https://aedc2cac-a2b4-46fa-a7f6-7bd6d32bd93a-00-51sp61fquhex.worf.repl.co:5000";
+const BASE_URL = LOCAL_BASE_URL; // Change this to LOCAL_BASE_URL for local testing
+const API_ENDPOINTS = {
+  GET_DATA: "/api/get_data",
+  GET_LOCATIONS: "/api/get_locations",
+  ADD_LOCATION: "/api/add_location",
+};
 
 const DataFetch = ({ setData }) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
         // Fetch result from function_a endpoint
-        const res = await fetch("http://localhost:5000/api/get_data");
+        const res = await fetch(`${BASE_URL}${API_ENDPOINTS.GET_DATA}`);
         if (!res.ok) {
           throw new Error(`HTTP error! Status: ${res.status}`);
         }
@@ -36,7 +44,7 @@ const LocationFetch = ({ setLocations }) => {
   useEffect(() => {
     const fetchLocations = async () => {
       try {
-        const res = await fetch("http://localhost:5000/api/get_locations");
+        const res = await fetch(`${BASE_URL}${API_ENDPOINTS.GET_LOCATIONS}`);
         if (!res.ok) {
           throw new Error(`HTTP error! Status: ${res.status}`);
         }
@@ -61,7 +69,7 @@ const LocationFetch = ({ setLocations }) => {
 
 const LocationAdd = async ({ curr_pos, setLocations }) => {
   try {
-    const res = await fetch("http://localhost:5000/api/add_location", {
+    const res = await fetch(`${BASE_URL}${API_ENDPOINTS.ADD_LOCATION}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
