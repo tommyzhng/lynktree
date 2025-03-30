@@ -1,0 +1,164 @@
+/* src/App.css */
+* {
+  box-sizing: border-box;
+}
+
+.app-container {
+  height: 100vh;
+  width: 100vw;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background-color: #255957;
+}
+
+.header {
+  padding: 1rem;
+  text-align: center;
+  background-color: #255957;
+  color: white;
+  flex-shrink: 0;
+  height: 6rem; /* Fixed height for header */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.title {
+  font-size: 2rem;
+  font-weight: bold;
+  margin: 0;
+}
+
+.subtitle {
+  font-size: 0.9rem;
+  margin: 0.25rem 0 0;
+  font-style: italic;
+}
+
+.content {
+  flex: 1;
+  display: flex;
+  overflow: hidden;
+  height: calc(100vh - 6rem);
+}
+
+.map-section {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+}
+
+.map-section.full {
+  width: 100%;
+  height: 100%;
+}
+
+.map-section.split {
+  width: 70%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+}
+
+.control-section {
+  width: 30%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+
+.map-login-button {
+  position: absolute;
+  top: 4.5rem;
+  right: 1.5rem;
+  background-color: #3b82f6;
+  color: white;
+  padding: 0.75rem 1.5rem;
+  border-radius: 1rem;
+  border: none;
+  cursor: pointer;
+  z-index: 1000;
+  font-size: 1rem; 
+}
+
+.map-login-button:hover {
+  background-color: #2563eb;
+}
+
+.map-info-button {
+  position: absolute;
+  top: 1.5rem;
+  right: 1.5rem;
+  background-color: #3b82f6;
+  color: white;
+  padding: 0.75rem 1.5rem; 
+  border-radius: 1rem;
+  border: none;
+  cursor: pointer;
+  z-index: 1000;
+  font-size: 1rem; 
+}
+
+.map-info-button:hover {
+  background-color: #2563eb;
+}
+
+
+/* Mobile adjustments */
+@media (max-width: 768px) {
+  .content {
+    flex-direction: column;
+    height: calc(100vh - 3.5rem); /* Adjust for smaller header on mobile */
+  }
+
+  .map-section.split {
+    width: 100%;
+    height: 60%;
+  }
+
+  .map-section.full {
+    width: 100%;
+    height: 100%;
+  }
+
+  .control-section {
+    width: 100%;
+    height: 40%;
+    padding: 0.5rem;
+  }
+
+  .title {
+    font-size: 1.25rem;
+  }
+
+  .subtitle {
+    font-size: 0.8rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .map-section.split {
+    height: 50%;
+  }
+
+  .control-section {
+    height: 50%;
+    padding: 0.25rem;
+  }
+
+  .title {
+    font-size: 1rem;
+  }
+
+  .subtitle {
+    font-size: 0.7rem;
+  }
+}
