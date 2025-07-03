@@ -4,5 +4,6 @@ Lynktree is an embedded IoT system designed to monitor environmental fire risks 
 
 This repository consists of:
 * Device firmware with a PlatformIO embedded C++ environment for a Raspberry Pi Pico W.
-* A React JS website to actively monitor fire risk and device health.
+* A Python backend server that processes data from the devices, calculates relevant metrics such as fire risk, and serves the data to the frontend.
+* A React JS frontend to actively monitor fire risk and device health.
   * https://tommyzhng.github.io/lynktree/
