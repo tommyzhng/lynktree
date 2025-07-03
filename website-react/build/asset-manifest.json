@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/lynktree/static/css/main.fefd82c8.css",
+    "main.js": "/lynktree/static/js/main.ce53a58c.js",
+    "static/js/453.e31f5092.chunk.js": "/lynktree/static/js/453.e31f5092.chunk.js",
+    "index.html": "/lynktree/index.html",
+    "main.fefd82c8.css.map": "/lynktree/static/css/main.fefd82c8.css.map",
+    "main.ce53a58c.js.map": "/lynktree/static/js/main.ce53a58c.js.map",
+    "453.e31f5092.chunk.js.map": "/lynktree/static/js/453.e31f5092.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.fefd82c8.css",
+    "static/js/main.ce53a58c.js"
+  ]
+}
